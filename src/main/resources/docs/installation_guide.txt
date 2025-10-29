@@ -1,0 +1,125 @@
+Sure — here’s the same **`installation_guide.txt`** as plain text only, no formatting or markdown:
+
+---
+
+# Installation Guide — Company AI Support System
+
+Overview
+This guide explains how to install, configure, and run the Company AI Support System.
+The application is built with Java 17, Maven, and a connection to Gemini API for AI responses.
+It supports both console and REST modes.
+
+System Requirements
+
+* Java 17 or later (OpenJDK or Oracle JDK)
+* Maven 3.8.0+
+* Internet connection (for Gemini API access)
+* 2 GB of free RAM minimum
+* Operating System: Windows 10+, macOS 12+, or Linux (Ubuntu 20.04+)
+
+Checking Java and Maven Installation
+
+1. Open a terminal or command prompt.
+2. Verify Java:
+   java -version
+   Expected output example:
+   openjdk version "17.0.11"
+3. Verify Maven:
+   mvn -v
+   If Maven is missing, install it:
+
+   * On macOS: brew install maven
+   * On Ubuntu: sudo apt install maven
+   * On Windows: download from [https://maven.apache.org/download.cgi](https://maven.apache.org/download.cgi)
+
+Project Setup
+
+1. Clone the repository:
+   git clone [https://gitlab.com/company/ai-support-system.git](https://gitlab.com/company/ai-support-system.git)
+2. Navigate into the project folder:
+   cd ai-support-system
+3. Install dependencies:
+   mvn clean install
+
+Environment Variables
+Before running the application, set the Gemini API key.
+
+Windows:
+setx GEMINI_API_KEY "your_api_key_here"
+
+macOS / Linux:
+export GEMINI_API_KEY="your_api_key_here"
+
+Make sure to restart your terminal after setting the variable.
+
+Configuration
+The system uses a configuration file located at:
+src/main/resources/application.properties
+
+You can modify the following settings:
+app.mode=console          # 'console' or 'api'
+app.language=en
+app.logging=true
+
+Optional: You can also create a .env file in the project root:
+GEMINI_API_KEY=your_api_key
+APP_MODE=console
+
+Running the Application
+To start in console mode:
+mvn exec:java -Dexec.mainClass="com.example.agents.Main"
+
+To start the REST API server (if implemented):
+mvn spring-boot:run
+
+When the application starts, you should see:
+Start chatting (type 'exit' to quit):
+
+Troubleshooting Installation Issues
+Problem: “Port already in use” when running Spring Boot.
+Solution: Change the server port in application.properties:
+server.port=8081
+
+Problem: “NullPointerException in ConfigLoader.”
+Cause: Missing environment variable or missing configuration file.
+Fix: Ensure GEMINI_API_KEY is set and file application.properties exists.
+
+Problem: “Model not found: gemini-2.5-flash.”
+Cause: Incorrect model name or outdated SDK.
+Fix: Check your dependency version and use gemini-2.5-flash or a supported model.
+
+Problem: “SSLHandshakeException.”
+Fix: Ensure system time and date are correct. This error can occur if your local SSL certificates are outdated.
+
+Problem: “Maven build failed.”
+Fix: Try:
+mvn clean install -U
+to force Maven to re-download dependencies.
+
+Updating the Application
+To update the project to the latest version:
+git pull origin main
+mvn clean install
+
+If you made local changes, commit or stash them first:
+git add .
+git commit -m "local update"
+git pull --rebase
+
+Uninstallation
+To remove the system:
+
+1. Delete the project folder:
+   rm -rf ai-support-system
+2. Optionally, remove cached dependencies:
+   rm -rf ~/.m2/repository/com/example/agents
+
+Support
+If you encounter problems not covered here:
+
+* Check the troubleshooting.txt document for runtime issues.
+* Verify your API key and internet connection.
+* Contact the internal DevOps team at [support@company.ai](mailto:support@company.ai)
+
+End of Installation Guide
+---

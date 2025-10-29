@@ -1,0 +1,177 @@
+API Reference
+-------------
+
+Base URL: https://api.company.com/v1
+
+Authentication:
+---------------
+- All requests require an API key in the header:
+  Authorization: Bearer <API_KEY>
+- API keys are generated in the dashboard under "Settings → API Keys".
+- Tokens expire after 30 days. Refresh by generating a new key.
+
+Endpoints:
+----------
+
+1. POST /users/login
+   Description: Authenticates a user and returns a session token.
+   Request Body:
+   {
+       "username": "string",
+       "password": "string"
+   }
+   Response:
+   {
+       "token": "string",
+       "expires_in": 3600
+   }
+   Common Errors:
+   - 400 Bad Request — missing username or password
+   - 401 Unauthorized — invalid credentials
+
+2. POST /users/logout
+   Description: Logs out the current user and invalidates the session token.
+   Headers: Authorization: Bearer <token>
+   Response:
+   {
+       "status": "success"
+   }
+   Common Errors:
+   - 401 Unauthorized — invalid token
+   - 403 Forbidden — token already invalidated
+
+3. GET /users/me
+   Description: Returns information about the authenticated user.
+   Headers: Authorization: Bearer <token>
+   Response:
+   {
+       "id": "user_123",
+       "username": "john_doe",
+       "email": "john@example.com",
+       "plan": "pro",
+       "created_at": "2025-01-01T12:00:00Z"
+   }
+   Common Errors:
+   - 401 Unauthorized — invalid token
+
+4. GET /orders
+   Description: Retrieves a list of orders for the authenticated user.
+   Headers: Authorization: Bearer <token>
+   Query Parameters:
+       - page (int) — page number, default 1
+       - limit (int) — number of results per page, default 20
+   Response:
+   [
+       {
+           "id": "order_123",
+           "status": "completed",
+           "total": 49.99,
+           "currency": "USD",
+           "created_at": "2025-02-15T09:30:00Z"
+       },
+       ...
+   ]
+   Common Errors:
+   - 401 Unauthorized — invalid token
+   - 404 Not Found — no orders found
+
+5. GET /orders/{id}
+   Description: Retrieve details of a specific order.
+   Headers: Authorization: Bearer <token>
+   Response:
+   {
+       "id": "order_123",
+       "status": "completed",
+       "items": [
+           { "product_id": "prod_1", "quantity": 2, "price": 19.99 },
+           { "product_id": "prod_2", "quantity": 1, "price": 9.99 }
+       ],
+       "total": 49.97,
+       "currency": "USD",
+       "created_at": "2025-02-15T09:30:00Z",
+       "shipping_address": "123 Main St, City, Country"
+   }
+   Common Errors:
+   - 401 Unauthorized — invalid token
+   - 404 Not Found — order ID does not exist
+
+6. POST /orders
+   Description: Create a new order.
+   Headers: Authorization: Bearer <token>
+   Request Body:
+   {
+       "items": [
+           { "product_id": "prod_1", "quantity": 2 },
+           { "product_id": "prod_2", "quantity": 1 }
+       ],
+       "shipping_address": "123 Main St, City, Country"
+   }
+   Response:
+   {
+       "id": "order_124",
+       "status": "pending",
+       "total": 49.97,
+       "currency": "USD",
+       "created_at": "2025-02-20T10:00:00Z"
+   }
+   Common Errors:
+   - 400 Bad Request — missing items or invalid quantity
+   - 401 Unauthorized — invalid token
+
+7. PATCH /orders/{id}
+   Description: Update an existing order (e.g., change shipping address or items before it is completed).
+   Headers: Authorization: Bearer <token>
+   Request Body:
+   {
+       "items": [
+           { "product_id": "prod_1", "quantity": 1 }
+       ],
+       "shipping_address": "456 Another St, City, Country"
+   }
+   Response:
+   {
+       "id": "order_124",
+       "status": "pending",
+       "total": 29.99,
+       "currency": "USD",
+       "updated_at": "2025-02-20T12:00:00Z"
+   }
+   Common Errors:
+   - 400 Bad Request — invalid update
+   - 401 Unauthorized — invalid token
+   - 403 Forbidden — cannot update completed order
+   - 404 Not Found — order ID does not exist
+
+8. DELETE /orders/{id}
+   Description: Cancel an order that has not yet been completed.
+   Headers: Authorization: Bearer <token>
+   Response:
+   {
+       "status": "cancelled"
+   }
+   Common Errors:
+   - 401 Unauthorized — invalid token
+   - 403 Forbidden — cannot cancel completed order
+   - 404 Not Found — order ID does not exist
+
+Rate Limits:
+------------
+- Maximum 60 requests per minute per API key.
+- Exceeding the limit returns 429 Too Many Requests.
+
+Error Codes:
+------------
+- 400 Bad Request — invalid input
+- 401 Unauthorized — invalid or missing API key
+- 403 Forbidden — action not allowed
+- 404 Not Found — resource does not exist
+- 429 Too Many Requests — rate limit exceeded
+- 500 Internal Server Error — temporary server issue
+
+Best Practices:
+---------------
+1. Always validate API responses before using.
+2. Use HTTPS for all requests.
+3. Implement retry logic for 5xx errors.
+4. Cache GET requests if possible to reduce load.
+5. Keep your API key secure; do not hardcode in source code.

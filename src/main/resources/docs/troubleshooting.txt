@@ -1,0 +1,254 @@
+Troubleshooting Notes
+---------------------
+
+Problem: Application fails to start with "NullPointerException in ConfigLoader".
+Cause: Missing environment variable CONFIG_PATH.
+Solution: Set CONFIG_PATH=/etc/app/config.json before running the application. Ensure the file exists and is readable.
+
+Problem: User cannot log in.
+Cause: Outdated authentication token or incorrect credentials.
+Solution: Ask user to re-login. If using API, refresh the token via POST /users/login endpoint. Verify username and password.
+
+Problem: Application crashes immediately after launch.
+Cause: Missing dependencies or incorrect Java version.
+Solution: Verify that Java 17+ is installed. Run `mvn clean install` to resolve dependencies. Check logs for missing jar files.
+
+Problem: "Port already in use" error on startup.
+Cause: The default server port is occupied by another process.
+Solution: Edit application.properties and set `server.port` to an available port. Restart the application.
+
+Problem: Cannot connect to the database.
+Cause: Incorrect database URL, credentials, or database server is down.
+Solution: Check database server status. Verify URL, username, and password in application.properties. Test connection with a database client.
+
+Problem: API returns 401 Unauthorized.
+Cause: Invalid or expired authentication token.
+Solution: Generate a new token via login endpoint. Ensure the token is sent in the Authorization header as `Bearer <token>`.
+
+Problem: API returns 404 Not Found.
+Cause: Requested resource does not exist or incorrect endpoint.
+Solution: Verify endpoint URL and resource IDs. Check API reference for correct paths.
+
+Problem: API returns 429 Too Many Requests.
+Cause: Exceeded rate limits for API calls.
+Solution: Implement exponential backoff or reduce request frequency. Check API documentation for limits.
+
+Problem: Slow response from API endpoints.
+Cause: High server load or network latency.
+Solution: Retry the request. Implement caching for frequent requests. Check server logs for performance bottlenecks.
+
+Problem: Webhooks fail to deliver events.
+Cause: Endpoint not responding in time or invalid URL.
+Solution: Ensure webhook endpoint responds within 3 seconds. Use HTTPS and valid certificate. Test endpoint with curl or Postman.
+
+Problem: Application memory usage is too high.
+Cause: Large datasets loaded into memory or memory leaks.
+Solution: Optimize data handling. Use pagination for API requests. Profile the application with Java VisualVM.
+
+Problem: Unexpected behavior after application update.
+Cause: Configuration files not compatible with new version.
+Solution: Backup configuration files before update. Read release notes for migration steps. Reset configs if necessary.
+
+Problem: Logging output missing or incomplete.
+Cause: Logging configuration incorrect or log level too high.
+Solution: Check logback.xml or log4j2.xml settings. Set appropriate log level (INFO or DEBUG) and ensure log files are writable.
+
+Problem: Email notifications not sent.
+Cause: SMTP server unreachable or credentials incorrect.
+Solution: Verify SMTP server host, port, username, and password. Check network connectivity. Test sending email with a client.
+
+Problem: File upload fails.
+Cause: File size exceeds limit or invalid file type.
+Solution: Check max upload size in application.properties. Verify allowed file types. Ensure correct multipart/form-data request format.
+
+Problem: Data not syncing between systems.
+Cause: API token expired or mapping errors.
+Solution: Refresh API token. Verify data mappings and field names. Check logs for sync errors.
+
+Problem: Application logs show "Permission Denied".
+Cause: Insufficient file or directory permissions.
+Solution: Grant read/write permissions to the application user. Avoid running as root if possible.
+
+Problem: SSL/TLS errors when connecting to API.
+Cause: Invalid certificate or incompatible protocol.
+Solution: Verify certificate validity. Update Java keystore with CA certificates. Ensure TLS 1.2+ is enabled.
+
+Problem: Unexpected shutdown on idle.
+Cause: Server power settings or memory issues.
+Solution: Check server uptime settings. Monitor memory usage. Consider running the application inside a process manager.
+
+Problem: Cached data not updating.
+Cause: Stale cache or improper cache invalidation.
+Solution: Clear cache manually. Implement proper cache invalidation strategy. Check caching library documentation.
+
+Problem: Failed to parse JSON response.
+Cause: API returned malformed JSON or unexpected structure.
+Solution: Validate API response. Ensure correct parsing logic. Handle optional fields gracefully.
+
+Problem: User permissions not applied.
+Cause: Role assignment not propagated.
+Solution: Check role mapping and synchronization logic. Reapply roles if necessary.
+
+Problem: Application logs show "Connection Refused".
+Cause: Target server offline or network blocked by firewall.
+Solution: Verify server status and network rules. Test connectivity with ping or telnet.
+
+Problem: Timeout while calling external service.
+Cause: Network latency or service overload.
+Solution: Increase timeout setting. Retry request. Monitor service health.
+
+Problem: Scheduled tasks not running.
+Cause: Cron jobs misconfigured or application scheduler failed.
+Solution: Verify task scheduling configuration. Check logs for scheduler errors.
+
+Problem: Error reading configuration file.
+Cause: File missing or corrupted.
+Solution: Restore configuration from backup. Validate syntax and encoding of config files.
+
+Problem: Application shows blank page in browser.
+Cause: Frontend build missing or incorrect URL mapping.
+Solution: Rebuild frontend assets. Verify web server configuration and routing.
+
+Problem: Application fails after Docker deployment.
+Cause: Missing environment variables or volume mounts.
+Solution: Set all required environment variables. Mount volumes correctly. Check Docker logs for errors.
+
+Problem: Notifications arrive multiple times.
+Cause: Event processing logic triggered repeatedly.
+Solution: Ensure idempotency in event handling. Add checks to prevent duplicate notifications.
+
+Problem: Data export fails.
+Cause: Insufficient disk space or incorrect format.
+Solution: Verify available disk space. Ensure export format matches requirements.
+
+Problem: Dependency version conflict.
+Cause: Multiple libraries using different versions of same dependency.
+Solution: Use `mvn dependency:tree` to find conflicts. Align versions in pom.xml.
+
+Problem: High CPU usage observed.
+Cause: Infinite loop or heavy computation.
+Solution: Profile the application. Optimize algorithms. Limit concurrent tasks.
+
+Problem: Feature toggles not applied.
+Cause: Configuration cache not refreshed.
+Solution: Clear cache or restart service. Verify feature toggle keys.
+
+Problem: SSL handshake fails intermittently.
+Cause: Network issues or outdated certificates.
+Solution: Check network stability. Update certificates. Ensure correct truststore is used.
+
+Problem: System clock out of sync.
+Cause: Server NTP service stopped.
+Solution: Start NTP service. Ensure system clock is synchronized.
+
+Problem: Logs contain repeated warnings about deprecated API.
+Cause: Using old API endpoints.
+Solution: Update code to use new API version. Remove deprecated calls.
+
+Problem: CSV import fails.
+Cause: Incorrect delimiter or encoding.
+Solution: Verify delimiter and encoding. Ensure header row matches expected fields.
+
+Problem: User session expires immediately.
+Cause: Session timeout too short or cookies misconfigured.
+Solution: Adjust session timeout. Verify cookies are sent and received correctly.
+
+Problem: External service certificate expired.
+Cause: TLS certificate not renewed.
+Solution: Renew certificate. Update truststore if necessary.
+
+Problem: Application memory leak detected.
+Cause: Unreleased objects or long-lived collections.
+Solution: Profile memory usage. Fix code to release unused objects. Consider GC tuning.
+
+Problem: Backup fails.
+Cause: Insufficient permissions or disk full.
+Solution: Verify backup path permissions. Ensure enough disk space. Check backup logs.
+
+Problem: Search functionality slow or inaccurate.
+Cause: Index not updated or corrupted.
+Solution: Rebuild search index. Optimize queries. Monitor indexing process.
+
+Problem: Application does not handle large files.
+Cause: Input buffer too small or processing inefficient.
+Solution: Increase buffer size. Optimize file processing logic.
+
+Problem: Error during data migration.
+Cause: Schema mismatch or missing data.
+Solution: Validate source and target schemas. Handle missing data. Test migration scripts.
+
+Problem: Notifications not delivered to mobile app.
+Cause: Push notification service misconfigured or API key invalid.
+Solution: Verify push service settings and API key. Test with sandbox environment.
+
+Problem: System logs missing timestamps.
+Cause: Logging format misconfigured.
+Solution: Update logging pattern to include timestamp. Verify system clock.
+
+Problem: Concurrent modification exceptions in collections.
+Cause: Multiple threads modifying same collection without synchronization.
+Solution: Use thread-safe collections or synchronize access properly.
+
+Problem: Application cannot resolve hostname.
+Cause: DNS issues or network misconfiguration.
+Solution: Test DNS resolution. Verify network settings. Update /etc/hosts if needed.
+
+Problem: Configuration changes not applied after restart.
+Cause: Cached configuration or old files.
+Solution: Clear cache and temporary files. Ensure latest configs are deployed.
+
+Problem: User receives "Access Denied" error.
+Cause: Role missing or token expired.
+Solution: Verify roles and permissions. Refresh token if necessary.
+
+Problem: Scheduled report not generated.
+Cause: Job failed silently or misconfigured schedule.
+Solution: Check scheduler logs. Validate report generation script.
+
+Problem: Error writing to log file.
+Cause: File locked or permission denied.
+Solution: Ensure log file is writable. Close other processes holding the file.
+
+Problem: Dependency download fails.
+Cause: Network connectivity or repository unavailable.
+Solution: Check internet connection. Verify repository URL. Retry download.
+
+Problem: Application shows "Service Unavailable".
+Cause: Downstream service unreachable.
+Solution: Verify dependencies. Restart services if needed.
+
+Problem: File permissions reset unexpectedly.
+Cause: Automated scripts or deployment process.
+Solution: Review scripts. Set correct permissions post-deployment.
+
+Problem: Application does not handle unicode correctly.
+Cause: Encoding mismatch.
+Solution: Ensure UTF-8 encoding is used for all files and streams.
+
+Problem: Long-running tasks get killed.
+Cause: System resource limits or timeouts.
+Solution: Increase allowed CPU/memory or break tasks into smaller jobs.
+
+Problem: Application cannot connect to Redis cache.
+Cause: Redis server down or password incorrect.
+Solution: Start Redis. Verify password and host/port configuration.
+
+Problem: Email bounce backs.
+Cause: Invalid email addresses or SMTP misconfiguration.
+Solution: Validate emails. Check SMTP logs and configuration.
+
+Problem: Web frontend shows broken layout.
+Cause: Missing CSS/JS files or caching issue.
+Solution: Clear browser cache. Ensure static files deployed correctly.
+
+Problem: Background worker crashes.
+Cause: Unhandled exception.
+Solution: Add proper exception handling. Monitor logs for root cause.
+
+Problem: API rate limit reset delayed.
+Cause: External service issue.
+Solution: Retry later or contact service provider.
+
+Problem: Error saving user preferences.
+Cause: Database constraint violation.
+Solution: Validate input. Ensure database schema matches application requirements.
