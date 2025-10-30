@@ -4,16 +4,19 @@ import janjurinok.LLMClient;
 import janjurinok.rag.DocumentChunk;
 import janjurinok.rag.DocumentLoader;
 import janjurinok.rag.RAGService;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class TechnicalAgent implements Agent {
    private final LLMClient llm;
    private final RAGService ragService;
 
-   public TechnicalAgent() {
-      this.llm = new LLMClient();
-      this.ragService = new RAGService();
+
+   public TechnicalAgent(LLMClient llm, RAGService ragService) {
+      this.llm = llm;
+      this.ragService = ragService;
    }
 
    @Override

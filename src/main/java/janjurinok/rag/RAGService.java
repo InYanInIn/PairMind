@@ -1,11 +1,15 @@
 package janjurinok.rag;
 
+import org.springframework.stereotype.Component;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 
+@Component
 public class RAGService {
    List<DocumentChunk> documentChunks;
+
 
    public RAGService() {
       System.out.println("🔹 Loading documents and generating embeddings...");

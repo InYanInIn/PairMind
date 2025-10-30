@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -21,9 +23,14 @@ import java.util.Objects;
 import static janjurinok.rag.BatchGenerator.createBatches;
 import static janjurinok.rag.EmbeddingGenerator.generateEmbeddingsBatch;
 
+@Component
 public class DocumentLoader {
-   private static final String API_KEY = System.getenv("GOOGLE_API_KEY");
+   private static String API_KEY;
    private static final int BATCH_SIZE = 50;
+
+   public DocumentLoader(@Value("${google.api.key}") String apiKey) {
+      API_KEY = apiKey;
+   }
 
    public static List<DocumentChunk> loadAllDocs(String dirPath) throws IOException {
       List<DocumentChunk> chunks = new ArrayList<>();

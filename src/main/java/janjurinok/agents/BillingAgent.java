@@ -1,16 +1,18 @@
 package janjurinok.agents;
 
 import janjurinok.LLMClient;
+import org.springframework.stereotype.Component;
 
 import java.util.Locale;
 import java.util.UUID;
 
+@Component
 public class BillingAgent implements Agent {
 
    private final LLMClient llm;
 
-   public BillingAgent() {
-      this.llm = new LLMClient();
+   public BillingAgent(LLMClient llm) {
+      this.llm = llm;
    }
 
    @Override
@@ -114,7 +116,6 @@ public class BillingAgent implements Agent {
    }
 
    private String handleConfirmPlanPrice(String planName) {
-      // Hardcoded pricing sample
       String proPrice = "$49.99/month";
       String premiumPrice = "$34.99/month";
       String standardPrice = "$20.00/month";

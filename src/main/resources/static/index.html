@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Support Chat — AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root{
+            --bg:#0f172a; --card:#0b1220; --accent:#6EE7B7; --muted:#9aa4b2;
+            --user:#0ea5e9; --bot:#7c3aed; --glass: rgba(255,255,255,0.03);
+            --radius:14px; --max-width:880px;
+        }
+        *{box-sizing:border-box}
+        html,body{height:100%; margin:0; font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial; background:
+                radial-gradient(1200px 600px at 10% 10%, rgba(124,58,237,0.12), transparent 6%),
+                radial-gradient(1000px 500px at 90% 90%, rgba(14,165,233,0.08), transparent 5%),
+                linear-gradient(180deg, #020617 0%, var(--bg) 100%); color:#e6eef6;}
+        .wrap{max-width:var(--max-width); margin:36px auto; padding:18px;}
+        .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:var(--radius);
+            box-shadow:0 10px 30px rgba(2,6,23,0.6); overflow:hidden; display:flex; flex-direction:column; height:80vh; min-height:560px; border:1px solid rgba(255,255,255,0.03);}
+        header.chat-header{padding:18px 20px; display:flex; align-items:center; gap:12px; border-bottom:1px solid rgba(255,255,255,0.02); flex:0 0 auto;}
+        .logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--bot), var(--user));display:flex;align-items:center;justify-content:center;font-weight:700;color:white;}
+        .title{font-size:16px;font-weight:600;}
+        .subtitle{font-size:12px;color:var(--muted);margin-top:2px;}
+        .email-badge{font-size:12px;color:var(--muted);margin-left:12px;padding:6px 10px;background:rgba(255,255,255,0.02);border-radius:10px;display:flex;align-items:center;}
+        .main{padding:18px; overflow:auto; background:linear-gradient(180deg, rgba(255,255,255,0.005), transparent); flex:1 1 auto;}
+        .messages{display:flex;flex-direction:column;gap:12px;max-width:760px;margin:0 auto;padding-bottom:12px;}
+        .msg{display:flex;gap:12px;align-items:flex-end;}
+        .avatar{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:600;color:white;}
+        .msg.bot{align-self:flex-start}
+        .msg.user{flex-direction:row-reverse;align-self:flex-end}
+        .bubble{max-width:72%;padding:12px 14px;border-radius:12px;line-height:1.35;font-size:14px;box-shadow:0 6px 18px rgba(2,6,23,0.45);word-break:break-word;white-space:pre-wrap;}
+        .msg.bot .avatar{background:linear-gradient(135deg,var(--bot), #5b21b6);} .msg.bot .bubble{background:linear-gradient(180deg, rgba(124,58,237,0.12), rgba(124,58,237,0.06)); color:#eaf0ff;}
+        .msg.user .avatar{background:linear-gradient(135deg,var(--user), #0369a1);} .msg.user .bubble{background:linear-gradient(180deg, rgba(2,132,199,0.18), rgba(2,132,199,0.12)); color:#ffffff;}
+        .meta{font-size:11px;color:var(--muted);margin-top:6px;}
+        .typing{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted);padding:10px 12px;margin-left:56px;}
+        .footer{padding:12px;display:flex;gap:12px;align-items:center;border-top:1px solid rgba(255,255,255,0.02);flex:0 0 auto;}
+        .input-wrap{display:flex;align-items:center;gap:12px;background:var(--glass);padding:10px;border-radius:12px;flex:1;}
+        textarea#message{background:transparent;border:none;resize:none;outline:none;color:#ffffff;font-size:14px;width:100%;height:44px;padding:6px;}
+        textarea#message::placeholder{color:rgba(255,255,255,0.55)}
+        .send-btn{background:linear-gradient(135deg,var(--accent),#34d399);border:none;color:#06202a;font-weight:600;padding:10px 16px;border-radius:10px;cursor:pointer;}
+        /* modal - required email (no skip) */
+        .modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.6);display:flex;align-items:center;justify-content:center;z-index:1200;}
+        .modal{background:linear-gradient(180deg,#071029, #081226);padding:22px;border-radius:12px;min-width:320px;max-width:420px;border:1px solid rgba(255,255,255,0.04)}
+        .modal h3{margin:0 0 8px 0;font-size:18px}
+        .modal p{margin:0 0 12px 0;color:var(--muted);font-size:13px}
+        .modal input{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff;outline:none;margin-bottom:8px}
+        .modal .row{display:flex;gap:8px;align-items:center}
+        .modal .btn{flex:1;padding:10px;border-radius:8px;border:none;cursor:pointer}
+        .btn-primary{background:linear-gradient(135deg,var(--accent),#34d399);color:#06202a;font-weight:700}
+        .error{color:#ffb3b3;font-size:13px;margin-bottom:6px}
+        /* scrollbar (WebKit) */
+        .main::-webkit-scrollbar{width:10px} .main::-webkit-scrollbar-thumb{background:linear-gradient(180deg, rgba(124,58,237,0.85), rgba(14,165,233,0.85));border-radius:10px}
+        @media (max-width:720px){.card{height:86vh}.logo{width:40px;height:40px}}
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="card" role="application" aria-label="Support chat">
+        <header class="chat-header">
+            <div class="logo">AI</div>
+            <div>
+                <div class="title">Company Support</div>
+                <div class="subtitle">Technical & Billing assistance — powered by RAG + LLM</div>
+            </div>
+            <div id="emailBadge" class="email-badge" style="margin-left:auto">
+                <span id="emailText">(not signed)</span>
+            </div>
+        </header>
+
+        <main class="main" id="main">
+            <div class="messages" id="messages" aria-live="polite" aria-atomic="false"></div>
+            <div id="typing" class="typing" style="display:none;"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div style="margin-left:6px">Agent is typing…</div></div>
+        </main>
+
+        <footer class="footer">
+            <div class="input-wrap">
+                <textarea id="message" placeholder="Ask a question about installation, API, billing..." aria-label="Message input" disabled></textarea>
+            </div>
+            <button id="sendBtn" class="send-btn" disabled>Send</button>
+        </footer>
+    </div>
+    <div class="small" style="text-align:center;margin-top:10px">Tip: press Enter to send, Shift+Enter for newline</div>
+</div>
+
+<!-- EMAIL MODAL (required) -->
+<div id="emailModal" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal" role="document">
+        <h3>Enter your email to start</h3>
+        <p>Please provide an email so we can identify your request. This is required to continue.</p>
+        <div id="emailError" class="error" style="display:none"></div>
+        <input id="emailInput" type="email" placeholder="your@email.com" autocomplete="email" />
+        <div class="row" style="margin-top:8px">
+            <button id="emailSubmit" class="btn btn-primary">Start chat</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const apiUrl = '/api/chat';
+    const messagesEl = document.getElementById('messages');
+    const mainEl = document.getElementById('main');
+    const messageInput = document.getElementById('message');
+    const sendBtn = document.getElementById('sendBtn');
+    const typingEl = document.getElementById('typing');
+    const emailModal = document.getElementById('emailModal');
+    const emailInput = document.getElementById('emailInput');
+    const emailSubmit = document.getElementById('emailSubmit');
+    const emailError = document.getElementById('emailError');
+    const emailText = document.getElementById('emailText');
+
+    // email lives only in memory for the session/tab
+    let userEmail = null;
+
+    function validateEmail(email){
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function setEmail(email) {
+        userEmail = email;
+        emailText.textContent = email;
+        messageInput.disabled = false;
+        sendBtn.disabled = false;
+        messageInput.focus();
+    }
+
+    // When page loads, modal is shown and user must enter email.
+    emailInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            submitEmail();
+        }
+    });
+
+    emailSubmit.addEventListener('click', submitEmail);
+
+    function submitEmail() {
+        const email = emailInput.value.trim();
+        if (!validateEmail(email)) {
+            emailError.style.display = 'block';
+            emailError.textContent = 'Please enter a valid email address.';
+            return;
+        }
+        emailError.style.display = 'none';
+        emailModal.style.display = 'none';
+        setEmail(email);
+    }
+
+    function addMessage({role='bot', text, time=new Date()}) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'msg ' + (role === 'user' ? 'user' : 'bot');
+        const avatar = document.createElement('div'); avatar.className = 'avatar'; avatar.textContent = role === 'user' ? 'You' : 'AI';
+        const bubble = document.createElement('div'); bubble.className = 'bubble'; bubble.innerHTML = text.replace(/\n/g, '<br>');
+        const meta = document.createElement('div'); meta.className = 'meta'; meta.textContent = new Date(time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+        const content = document.createElement('div'); content.appendChild(bubble); content.appendChild(meta);
+        wrapper.appendChild(avatar); wrapper.appendChild(content);
+        messagesEl.appendChild(wrapper);
+        mainEl.scrollTop = mainEl.scrollHeight;
+    }
+
+    function showTyping(show=true){ typingEl.style.display = show ? 'flex' : 'none'; mainEl.scrollTop = mainEl.scrollHeight; }
+
+    async function sendMessage() {
+        const text = messageInput.value.trim();
+        if (!text || !userEmail) return;
+        addMessage({role:'user', text, time:new Date()});
+        messageInput.value = ''; messageInput.focus();
+        showTyping(true); sendBtn.disabled = true;
+
+        try {
+            const payload = { message: text, email: userEmail };
+            const res = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            });
+
+            const reply = await (res.ok ? res.text() : res.text());
+            showTyping(false); sendBtn.disabled = false;
+            if (!res.ok) {
+                addMessage({role:'bot', text:`⚠️ Error: ${res.status} ${reply}`});
+                return;
+            }
+            addMessage({role:'bot', text: reply});
+        } catch (err) {
+            showTyping(false); sendBtn.disabled = false;
+            addMessage({role:'bot', text:'⚠️ Network error. Make sure the backend is running.'});
+            console.error(err);
+        }
+    }
+
+    // Enter sends, Shift+Enter newline
+    messageInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    });
+    sendBtn.addEventListener('click', sendMessage);
+
+    // welcome
+    addMessage({role:'bot', text:'Hello! I can help with technical documentation and billing. Please provide details.'});
+</script>
+</body>
+</html>

@@ -1,10 +1,12 @@
 package janjurinok.agents;
 
 import janjurinok.LLMClient;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class AgentRouter {
    private final LLMClient llm;
    private final BillingAgent billingAgent;
@@ -12,14 +14,18 @@ public class AgentRouter {
 
    private final List<String> conversationHistory = new ArrayList<>();
    private String lastActiveAgent = null;
+   private String userEmail = null;
 
-   public AgentRouter() {
-      this.llm = new LLMClient();
-      this.billingAgent = new BillingAgent();
-      this.technicalAgent = new TechnicalAgent();
+   public AgentRouter(LLMClient llm, BillingAgent billingAgent, TechnicalAgent technicalAgent) {
+      this.llm = llm;
+      this.billingAgent = billingAgent;
+      this.technicalAgent = technicalAgent;
    }
 
-   public String handleUserMessage(String userInput) {
+   public String handleUserMessage(String userInput, String email) {
+      if (email != null && !email.isEmpty()) {
+         this.userEmail = email;
+      }
       conversationHistory.add("User: " + userInput);
 
       String agentDecision = decideAgent(userInput);
@@ -31,12 +37,11 @@ public class AgentRouter {
             lastActiveAgent = "TechnicalAgent";
             break;
          case "BillingAgent":
-            agentResponse = billingAgent.respond(userInput);
+            agentResponse = billingAgent.respond("Email: "+ this.userEmail + "\n" + userInput);
             lastActiveAgent = "BillingAgent";
             break;
          default:
-            agentResponse = "🤖 I’m not sure which department should handle this. " +
-                  "Could you please clarify whether this is a *technical* or *billing* question?";
+            agentResponse = "🤖 I’m not sure which department should handle this. ";
       }
 
       conversationHistory.add(agentDecision + ": " + agentResponse);

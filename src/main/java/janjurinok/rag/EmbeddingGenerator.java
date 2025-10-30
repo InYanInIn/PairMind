@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,9 +19,16 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class EmbeddingGenerator {
    private static final int API_DELAY = 70000;
-   private static final String API_KEY = System.getenv("GOOGLE_API_KEY");
+
+   private static String API_KEY;
+
+   public EmbeddingGenerator(@Value("${google.api.key}") String apiKey) {
+      API_KEY = apiKey;
+   }
+
    public static List<float[]> generateEmbeddingsBatch(List<File> batch_files, String outputFile) {
       Path outputFilePath = Path.of(outputFile);
       List<float[]> embeddingsList = new ArrayList<>();

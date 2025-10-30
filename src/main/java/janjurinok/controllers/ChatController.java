@@ -9,10 +9,14 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*")
 public class ChatController {
 
-   private final AgentRouter agentRouter = new AgentRouter();
+   private final AgentRouter agentRouter;
+
+   public ChatController(AgentRouter agentRouter) {
+      this.agentRouter = agentRouter;
+   }
 
    @PostMapping("/chat")
    public String chat(@RequestBody MessageRequest request) {
-      return agentRouter.handleUserMessage(request.getMessage());
+      return agentRouter.handleUserMessage(request.getMessage(), request.getEmail());
    }
 }
