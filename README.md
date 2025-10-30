@@ -6,7 +6,7 @@ PairMind is a Spring Boot–based AI customer support system that routes user qu
 
 ## 🧩 1. Add Your API Key
 
-Edit the following line with your Gemini API key at file:
+Edit the following file with your Gemini API key:
 
 ```
 src/main/resources/application.properties
