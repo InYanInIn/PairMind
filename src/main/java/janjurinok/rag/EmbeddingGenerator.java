@@ -23,13 +23,17 @@ import java.util.List;
 public class EmbeddingGenerator {
    private static final int API_DELAY = 70000;
 
-   private static String API_KEY;
+   private final String API_KEY;
 
-   public EmbeddingGenerator(@Value("${google.api.key}") String apiKey) {
+
+   public EmbeddingGenerator(@Value("${google.api.key:#{null}}") String apiKey) {
+      if (apiKey == null) {
+         apiKey = System.getenv("GOOGLE_API_KEY");
+      }
       API_KEY = apiKey;
    }
 
-   public static List<float[]> generateEmbeddingsBatch(List<File> batch_files, String outputFile) {
+   public List<float[]> generateEmbeddingsBatch(List<File> batch_files, String outputFile) {
       Path outputFilePath = Path.of(outputFile);
       List<float[]> embeddingsList = new ArrayList<>();
       ObjectMapper mapper = new ObjectMapper();
@@ -100,7 +104,7 @@ public class EmbeddingGenerator {
       return embeddingsList;
    }
 
-   public static float[] generateEmbeddings(File batchFile) {;
+   public float[] generateEmbeddings(File batchFile) {;
       ObjectMapper mapper = new ObjectMapper();
 
       HttpClient client = HttpClient.newHttpClient();

@@ -5,34 +5,28 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.stereotype.Component;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URL;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import static janjurinok.rag.BatchGenerator.createBatches;
-import static janjurinok.rag.EmbeddingGenerator.generateEmbeddingsBatch;
 
 @Component
 public class DocumentLoader {
-   private static String API_KEY;
    private static final int BATCH_SIZE = 50;
 
-   public DocumentLoader(@Value("${google.api.key}") String apiKey) {
-      API_KEY = apiKey;
+   private final EmbeddingGenerator embeddingGenerator;
+
+   public DocumentLoader(EmbeddingGenerator embeddingGenerator) {
+      this.embeddingGenerator = embeddingGenerator;
    }
 
-   public static List<DocumentChunk> loadAllDocs(String dirPath) throws IOException {
+
+   public List<DocumentChunk> loadAllDocs(String dirPath) throws IOException {
+
       List<DocumentChunk> chunks = new ArrayList<>();
       File folder = new File(dirPath);
 
@@ -51,7 +45,7 @@ public class DocumentLoader {
       }
 
       List<File> batch_files = createBatches(allBlocks, "src/main/resources/batches");
-      List<float[]> embeddingsList = generateEmbeddingsBatch(batch_files, "src/main/resources/embeddings.json");
+      List<float[]> embeddingsList = embeddingGenerator.generateEmbeddingsBatch(batch_files, "src/main/resources/embeddings.json");
 
 //      System.out.println(embeddingsList.size() + " embeddings generated.");
 //      System.out.println(allBlocks.size() + " document blocks processed.");
