@@ -80,7 +80,6 @@ These documents describe how the company’s intelligent support platform works 
 
 * 🧠 **Architecture overview** — Java 17 + Spring Boot + Maven system integrated with **Gemini API**
 * ⚙️ **Technical operations** — installation, configuration, troubleshooting, and API usage
-* 💳 **Billing procedures** — payments, refunds, plans, and account management
 * 🔐 **External API endpoints** — authentication, user management, and order operations
 * 🧾 **Error handling and best practices** — retry logic, API limits, logging, and debugging
 
