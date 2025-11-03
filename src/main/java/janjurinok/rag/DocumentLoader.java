@@ -109,4 +109,65 @@ public class DocumentLoader {
       mapper.writerWithDefaultPrettyPrinter().writeValue(new File(outputPath), array);
       System.out.println("💾 Saved chunks to " + outputPath);
    }
+
+   public static List<float[]> loadAgentsFromJson(String tech_path, String bill_path) throws IOException {
+      List<float[]> agent_embeddings = new ArrayList<>();
+      ObjectMapper mapper = new ObjectMapper();
+
+      for (String path : new String[]{tech_path, bill_path}) {
+         JsonNode root = mapper.readTree(new File(path));
+         if (root.isArray()) {
+            for (JsonNode node : root) {
+               JsonNode embNode = node.get("embedding");
+               float[] embedding = new float[embNode.size()];
+               for (int i = 0; i < embNode.size(); i++) {
+                  embedding[i] = (float) embNode.get(i).asDouble();
+               }
+               agent_embeddings.add(embedding);
+            }
+         }
+      }
+
+      return agent_embeddings;
+   }
+
+
+   public List<float[]> loadAllAgents(String dirPath) throws IOException {
+      String tech_query = """
+    Technical support and product usage questions:
+    - Installing and setting up the application or service
+    - Troubleshooting crashes, errors, performance or startup issues
+    - Configuration, environment variables, API keys and integration steps
+    - Running commands, logs analysis, debugging steps, and stack traces
+    - Updating, upgrading, or uninstalling the software
+    - Connectivity, database, authentication and deployment problems
+    - "My app crashes on launch", "How to enable X feature", "Where are the logs?"
+    """;
+      String bill_query = """
+    Billing, payments and subscription questions:
+    - Refund requests, charge disputes and billing errors
+    - Subscription plans, features by plan, and pricing differences
+    - Upgrading, downgrading or cancelling subscriptions
+    - Payment methods, invoices, tax receipts and billing cycles
+    - Refund timeframes, pro-rata charges and trial conversions
+    - "I was charged twice", "How do I cancel my subscription", "Where is my invoice?"
+    """;
+
+      File tech_batch = BatchGenerator.createSingleBatchFile("src/main/resources/tech_agent", tech_query);
+      File bill_batch = BatchGenerator.createSingleBatchFile("src/main/resources/bill_agent", bill_query);
+      float[] tech_queryEmbedding = embeddingGenerator.generateEmbeddings(tech_batch);
+      float[] bill_queryEmbedding = embeddingGenerator.generateEmbeddings(bill_batch);
+
+      DocumentChunk tech_chunk = new DocumentChunk(tech_query, tech_queryEmbedding, "technical_agent");
+      DocumentChunk bill_chunk = new DocumentChunk(bill_query, bill_queryEmbedding, "billing_agent");
+
+      saveChunksToJson(List.of(tech_chunk), "src/main/resources/agent_profiles/tech_chunk.json");
+      saveChunksToJson(List.of(bill_chunk), "src/main/resources/agent_profiles/bill_chunk.json");
+
+      List<float[]> agent_embeddings = new ArrayList<>();
+      agent_embeddings.add(tech_queryEmbedding);
+      agent_embeddings.add(bill_queryEmbedding);
+      return agent_embeddings;
+   }
+
 }

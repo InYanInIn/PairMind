@@ -17,6 +17,11 @@ public class ChatController {
 
    @PostMapping("/chat")
    public String chat(@RequestBody MessageRequest request) {
-      return agentRouter.handleUserMessage(request.getMessage(), request.getEmail());
+      String sessionId = request.getSessionId();
+      if (sessionId == null || sessionId.isEmpty()) {
+         sessionId = java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+      }
+
+      return agentRouter.handleUserMessage(request.getMessage(), request.getEmail(), sessionId);
    }
 }

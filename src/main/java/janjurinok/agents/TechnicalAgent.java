@@ -20,7 +20,7 @@ public class TechnicalAgent implements Agent {
    }
 
    @Override
-   public String respond(String userInput) {
+   public String respond(String userInput, String sessionId) {
       try {
 
          List<DocumentChunk> relevantChunks = ragService.getRelevantChunks(userInput);

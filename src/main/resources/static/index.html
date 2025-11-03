@@ -25,14 +25,54 @@
         .subtitle{font-size:12px;color:var(--muted);margin-top:2px;}
         .email-badge{font-size:12px;color:var(--muted);margin-left:12px;padding:6px 10px;background:rgba(255,255,255,0.02);border-radius:10px;display:flex;align-items:center;}
         .main{padding:18px; overflow:auto; background:linear-gradient(180deg, rgba(255,255,255,0.005), transparent); flex:1 1 auto;}
-        .messages{display:flex;flex-direction:column;gap:12px;max-width:760px;margin:0 auto;padding-bottom:12px;}
+        .messages{
+            display:flex;
+            flex-direction:column;
+            gap:12px;
+            max-width:760px;
+            margin:0 auto;
+            padding-bottom:12px;
+            writing-mode: horizontal-tb;
+        }
+
         .msg{display:flex;gap:12px;align-items:flex-end;}
         .avatar{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:600;color:white;}
         .msg.bot{align-self:flex-start}
         .msg.user{flex-direction:row-reverse;align-self:flex-end}
-        .bubble{max-width:72%;padding:12px 14px;border-radius:12px;line-height:1.35;font-size:14px;box-shadow:0 6px 18px rgba(2,6,23,0.45);word-break:break-word;white-space:pre-wrap;}
-        .msg.bot .avatar{background:linear-gradient(135deg,var(--bot), #5b21b6);} .msg.bot .bubble{background:linear-gradient(180deg, rgba(124,58,237,0.12), rgba(124,58,237,0.06)); color:#eaf0ff;}
-        .msg.user .avatar{background:linear-gradient(135deg,var(--user), #0369a1);} .msg.user .bubble{background:linear-gradient(180deg, rgba(2,132,199,0.18), rgba(2,132,199,0.12)); color:#ffffff;}
+
+        /* Fixed bubble styling */
+        .bubble{
+            display: block;
+            max-width: 72%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            line-height: 1.35;
+            font-size: 14px;
+            box-shadow: 0 6px 18px rgba(2,6,23,0.45);
+            word-break: normal;
+            overflow-wrap: break-word;
+            white-space: normal;
+            hyphens: none;
+            letter-spacing: normal;
+            word-spacing: normal;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            width: fit-content;
+            min-width: min-content;
+        }
+
+        .msg.bot .avatar{background:linear-gradient(135deg,var(--bot), #5b21b6);}
+        .msg.bot .bubble{background:linear-gradient(180deg, rgba(124,58,237,0.12), rgba(124,58,237,0.06)); color:#eaf0ff;}
+        .msg.user .avatar{background:linear-gradient(135deg,var(--user), #0369a1);}
+        .msg.user .bubble{background:linear-gradient(180deg, rgba(2,132,199,0.18), rgba(2,132,199,0.12)); color:#ffffff;}
+
+        @media (max-width: 720px){
+            .card{height:86vh}
+            .logo{width:40px;height:40px}
+            .bubble{
+                max-width: 85%;
+            }
+        }
         .meta{font-size:11px;color:var(--muted);margin-top:6px;}
         .typing{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted);padding:10px 12px;margin-left:56px;}
         .footer{padding:12px;display:flex;gap:12px;align-items:center;border-top:1px solid rgba(255,255,255,0.02);flex:0 0 auto;}
@@ -54,6 +94,7 @@
         .main::-webkit-scrollbar{width:10px} .main::-webkit-scrollbar-thumb{background:linear-gradient(180deg, rgba(124,58,237,0.85), rgba(14,165,233,0.85));border-radius:10px}
         @media (max-width:720px){.card{height:86vh}.logo{width:40px;height:40px}}
     </style>
+
 </head>
 <body>
 <div class="wrap">
@@ -110,8 +151,8 @@
     const emailError = document.getElementById('emailError');
     const emailText = document.getElementById('emailText');
 
-    // email lives only in memory for the session/tab
     let userEmail = null;
+    let sessionId = null; // ✅ added session tracking
 
     function validateEmail(email){
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -123,9 +164,17 @@
         messageInput.disabled = false;
         sendBtn.disabled = false;
         messageInput.focus();
+
+        // ✅ create or restore sessionId for this email
+        const storedSession = sessionStorage.getItem('chatSessionId_' + email);
+        if (storedSession) {
+            sessionId = storedSession;
+        } else {
+            sessionId = Math.random().toString(36).substring(2, 10).toUpperCase();
+            sessionStorage.setItem('chatSessionId_' + email, sessionId);
+        }
     }
 
-    // When page loads, modal is shown and user must enter email.
     emailInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -150,26 +199,44 @@
     function addMessage({role='bot', text, time=new Date()}) {
         const wrapper = document.createElement('div');
         wrapper.className = 'msg ' + (role === 'user' ? 'user' : 'bot');
-        const avatar = document.createElement('div'); avatar.className = 'avatar'; avatar.textContent = role === 'user' ? 'You' : 'AI';
-        const bubble = document.createElement('div'); bubble.className = 'bubble'; bubble.innerHTML = text.replace(/\n/g, '<br>');
-        const meta = document.createElement('div'); meta.className = 'meta'; meta.textContent = new Date(time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-        const content = document.createElement('div'); content.appendChild(bubble); content.appendChild(meta);
-        wrapper.appendChild(avatar); wrapper.appendChild(content);
+        const avatar = document.createElement('div');
+        avatar.className = 'avatar';
+        avatar.textContent = role === 'user' ? 'You' : 'AI';
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+        bubble.innerHTML = text.replace(/\n/g, '<br>');
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        meta.textContent = new Date(time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+        const content = document.createElement('div');
+        content.appendChild(bubble);
+        content.appendChild(meta);
+        wrapper.appendChild(avatar);
+        wrapper.appendChild(content);
         messagesEl.appendChild(wrapper);
         mainEl.scrollTop = mainEl.scrollHeight;
     }
 
-    function showTyping(show=true){ typingEl.style.display = show ? 'flex' : 'none'; mainEl.scrollTop = mainEl.scrollHeight; }
+    function showTyping(show=true){
+        typingEl.style.display = show ? 'flex' : 'none';
+        mainEl.scrollTop = mainEl.scrollHeight;
+    }
 
     async function sendMessage() {
-        const text = messageInput.value.trim();
+        const text = messageInput.value.replace(/\s*\n\s*/g, ' ').trim();
         if (!text || !userEmail) return;
         addMessage({role:'user', text, time:new Date()});
         messageInput.value = ''; messageInput.focus();
         showTyping(true); sendBtn.disabled = true;
 
         try {
-            const payload = { message: text, email: userEmail };
+            // ✅ include sessionId in payload
+            const payload = {
+                message: text,
+                email: userEmail,
+                sessionId: sessionId
+            };
+
             const res = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -178,6 +245,7 @@
 
             const reply = await (res.ok ? res.text() : res.text());
             showTyping(false); sendBtn.disabled = false;
+
             if (!res.ok) {
                 addMessage({role:'bot', text:`⚠️ Error: ${res.status} ${reply}`});
                 return;
@@ -190,13 +258,14 @@
         }
     }
 
-    // Enter sends, Shift+Enter newline
     messageInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
     });
     sendBtn.addEventListener('click', sendMessage);
 
-    // welcome
     addMessage({role:'bot', text:'Hello! I can help with technical documentation and billing. Please provide details.'});
 </script>
 </body>

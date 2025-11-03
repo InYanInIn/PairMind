@@ -2,5 +2,5 @@ package janjurinok.agents;
 
 public interface Agent {
 
-   String respond(String userInput);
+   String respond(String userInput, String sessionId);
 }
