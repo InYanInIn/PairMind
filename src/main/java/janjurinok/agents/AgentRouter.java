@@ -69,11 +69,11 @@ public class AgentRouter {
       conversationHistory.add("User: " + userInput);
 
       String agentDecision;
-      if (conversationHistory.size()>1&&conversationHistory.get(conversationHistory.size()-2).contains("👀")){
+      if (conversationHistory.size()>1&&conversationHistory.get(conversationHistory.size()-2).contains("👀")||userInput.split(" ").length<3){
          agentDecision = decideAgentWithLLM(userInput);
       }
       else {
-         System.out.println(conversationHistory);
+//         System.out.println(conversationHistory);
          agentDecision = decideAgent(userInput);
       }
 
@@ -115,7 +115,7 @@ public class AgentRouter {
          }
 
       }
-      System.out.println("Agent routing scores: " + bestAgent + " with score " + bestScore);
+//      System.out.println("Agent routing scores: " + bestAgent + " with score " + bestScore);
       final float HIGH_CONF = 0.56f;
       final float LOW_CONF = 0.55f;
 

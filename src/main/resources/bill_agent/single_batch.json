@@ -1,0 +1,8 @@
+{
+  "model" : "models/gemini-embedding-001",
+  "content" : {
+    "parts" : [ {
+      "text" : "Billing, payments and subscription questions:\n- Refund requests, charge disputes and billing errors\n- Subscription plans, features by plan, and pricing differences\n- Upgrading, downgrading or cancelling subscriptions\n- Payment methods, invoices, tax receipts and billing cycles\n- Refund timeframes, pro-rata charges and trial conversions\n- Single-token examples: Pro, Premium, Standard, Basic\n- Keywords & short forms: refund, cancel, invoice, charge, billing, price\n- Example phrasings: \"I was charged twice\", \"How do I cancel my subscription\", \"Where is my invoice?\"\n"
+    } ]
+  }
+}

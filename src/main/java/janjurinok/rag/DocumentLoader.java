@@ -133,25 +133,27 @@ public class DocumentLoader {
 
 
    public List<float[]> loadAllAgents(String dirPath) throws IOException {
-      String tech_query = """
-    Technical support and product usage questions:
-    - Installing and setting up the application or service
-    - Troubleshooting crashes, errors, performance or startup issues
-    - Configuration, environment variables, API keys and integration steps
-    - Running commands, logs analysis, debugging steps, and stack traces
-    - Updating, upgrading, or uninstalling the software
-    - Connectivity, database, authentication and deployment problems
-    - "My app crashes on launch", "How to enable X feature", "Where are the logs?"
-    """;
+   String tech_query = """
+                  Technical support and product usage questions:
+                  - Installing and setting up the application or service
+                  - Troubleshooting crashes, errors, performance or startup issues
+                  - Configuration, environment variables, API keys and integration steps
+                  - Running commands, logs analysis, debugging steps, and stack traces
+                  - Updating, upgrading, or uninstalling the software
+                  - Connectivity, database, authentication and deployment problems
+                  - "My app crashes on launch", "How to enable X feature", "Where are the logs?"
+                  """;
       String bill_query = """
-    Billing, payments and subscription questions:
-    - Refund requests, charge disputes and billing errors
-    - Subscription plans, features by plan, and pricing differences
-    - Upgrading, downgrading or cancelling subscriptions
-    - Payment methods, invoices, tax receipts and billing cycles
-    - Refund timeframes, pro-rata charges and trial conversions
-    - "I was charged twice", "How do I cancel my subscription", "Where is my invoice?"
-    """;
+                  Billing, payments and subscription questions:
+                  - Refund requests, charge disputes and billing errors
+                  - Subscription plans, features by plan, and pricing differences
+                  - Upgrading, downgrading or cancelling subscriptions
+                  - Payment methods, invoices, tax receipts and billing cycles
+                  - Refund timeframes, pro-rata charges and trial conversions
+                  - Single-token examples: Pro, Premium, Standard, Basic
+                  - Keywords & short forms: refund, cancel, invoice, charge, billing, price
+                  - Example phrasings: "I was charged twice", "How do I cancel my subscription", "Where is my invoice?"
+                  """;
 
       File tech_batch = BatchGenerator.createSingleBatchFile("src/main/resources/tech_agent", tech_query);
       File bill_batch = BatchGenerator.createSingleBatchFile("src/main/resources/bill_agent", bill_query);

@@ -13,6 +13,14 @@ public class BillingAgent implements Agent {
 
    private final LLMClient llm;
    private final Map<String, ConversationContext> conversationContexts;
+   private enum Tool {
+      EXTRACT_EMAIL,
+      EXTRACT_ORDER_ID,
+      EXTRACT_PLAN_NAME,
+      CREATE_REFUND_TICKET,
+      GET_REFUND_POLICY,
+      GET_PLAN_PRICE
+   }
 
    private enum Intent {
       REQUEST_REFUND,
@@ -305,7 +313,7 @@ public class BillingAgent implements Agent {
       if (lower.contains("pro")) return "pro";
       if (lower.contains("standard")) return "standard";
       if (lower.contains("premium")) return "premium";
-      if (lower.contains("basic")) return "basic";
+      if (lower.contains("any")||lower.contains("all")) return "all";
       return null;
    }
 }
