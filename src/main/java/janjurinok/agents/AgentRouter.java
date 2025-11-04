@@ -29,7 +29,6 @@ public class AgentRouter {
    private final Map<String, float[]> agentEmbeddings = new HashMap<>();
    private String lastActiveAgent = null;
    private String userEmail = null;
-   private final Path EMB_PATH = Path.of("src/main/resources/agent_embeddings.json");
 
    public AgentRouter(LLMClient llm, BillingAgent billingAgent, TechnicalAgent technicalAgent, EmbeddingGenerator embeddingGenerator, DocumentLoader documentLoader) {
       this.llm = llm;

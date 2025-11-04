@@ -3,10 +3,7 @@ package janjurinok.agents;
 import janjurinok.LLMClient;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 public class BillingAgent implements Agent {
@@ -19,59 +16,80 @@ public class BillingAgent implements Agent {
       EXTRACT_PLAN_NAME,
       CREATE_REFUND_TICKET,
       GET_REFUND_POLICY,
-      GET_PLAN_PRICE
-   }
-
-   private enum Intent {
-      REQUEST_REFUND,
-      CHECK_PLAN_AND_REFUND_POLICY,
-      CONFIRM_PLAN_PRICE,
-      PROVIDE_MISSING_INFO,
-      UNKNOWN
+      GET_PLAN_PRICE,
+      ASK_FOR_EMAIL,
+      ASK_FOR_ORDER_ID,
+      ASK_FOR_PLAN_NAME
    }
 
    private static class ConversationContext {
-      private final StringBuilder conversationHistory = new StringBuilder();
-      private String pendingAction;
-      private String missingField;
+      private final List<Map<String, Object>> messageHistory = new ArrayList<>();
+      private final Map<String, Object> extractedData = new HashMap<>();
+
+      public void removePlanName(){
+         extractedData.remove("plan_name");
+      }
+
+      public void removeOrderId(){
+         extractedData.remove("order_id");
+      }
 
       public void addUserMessage(String message) {
-         conversationHistory.append("User: ").append(message).append("\n");
+         messageHistory.add(Map.of("role", "user", "content", message));
       }
 
-      public void addAgentMessage(String message) {
-         conversationHistory.append("BillingAgent: ").append(message).append("\n");
+      public void addAssistantMessage(String message) {
+         messageHistory.add(Map.of("role", "assistant", "content", message));
       }
 
-      public String getHistory(){
-         return conversationHistory.toString();
+      public void addToolCall(String toolName, Map<String, Object> parameters, String result) {
+         messageHistory.add(Map.of(
+               "role", "tool",
+               "tool_call", toolName,
+               "parameters", parameters,
+               "result", result
+         ));
       }
 
-      public String getPendingAction() {
-         return pendingAction;
+      public void storeData(String key, Object value) {
+         extractedData.put(key, value);
       }
 
-      public String getMissingField() {
-         return missingField;
+      public Object getData(String key) {
+         return extractedData.get(key);
       }
 
-      public boolean hasPendingAction(){
-         return pendingAction != null;
+      public boolean hasData(String key) {
+         return extractedData.containsKey(key);
       }
 
-      public void setPendingAction(String action, String field) {
-         this.pendingAction = action;
-         this.missingField = field;
+      public List<Map<String, Object>> getHistory() {
+         return new ArrayList<>(messageHistory);
       }
 
-      public void clearPendingAction() {
-         this.pendingAction = null;
-         this.missingField = null;
+      public String getConversationText() {
+         StringBuilder sb = new StringBuilder();
+         for (Map<String, Object> message : messageHistory) {
+            String role = (String) message.get("role");
+            if ("user".equals(role) || "assistant".equals(role)) {
+               sb.append(role).append(": ").append(message.get("content")).append("\n");
+            }
+         }
+         return sb.toString();
+      }
+   }
+
+   private static class ToolCall {
+      final Tool tool;
+      final Map<String, Object> parameters;
+
+      ToolCall(Tool tool, Map<String, Object> parameters) {
+         this.tool = tool;
+         this.parameters = parameters;
       }
 
-
-      public void setMissingField(String missingField) {
-         this.missingField = missingField;
+      String getToolName() {
+         return tool.name();
       }
    }
 
@@ -87,17 +105,9 @@ public class BillingAgent implements Agent {
 
          context.addUserMessage(userInput);
 
-         Intent intent = ClassifyIntent(userInput, context);
+         String response = processWithToolCalling(context);
 
-         String response = switch (intent) {
-            case REQUEST_REFUND -> handleRequestRefund(userInput, context);
-            case CHECK_PLAN_AND_REFUND_POLICY -> handleCheckPlanAndRefundPolicy(userInput, context);
-            case CONFIRM_PLAN_PRICE -> handleConfirmPlanPrice(userInput, context);
-            case PROVIDE_MISSING_INFO -> handleMissingInfo(userInput, context);
-            default -> getFallbackResponse();
-         };
-
-         context.addAgentMessage(response);
+         context.addAssistantMessage(response);
          return response;
       } catch (Exception ex) {
          ex.printStackTrace();
@@ -105,131 +115,315 @@ public class BillingAgent implements Agent {
       }
    }
 
+   private String processWithToolCalling(ConversationContext context) {
+      int maxIterations = 5;
+      String finalResponse = null;
 
+      for (int i = 0; i < maxIterations; i++) {
+         String prompt = buildToolCallPrompt(context);
+         String llmResponse = llm.ask(prompt);
 
+         if (llmResponse == null){
+            System.out.println("AWARIA 1");
+            return getFallbackResponse();
+         }
+//         System.out.println("LLM Result: "+llmResponse+"\n\n");
+         ToolCall toolCall = parseToolCall(llmResponse);
 
-   private Intent ClassifyIntent(String userInput, ConversationContext context) {
-      if (context.hasPendingAction()) {
-         return Intent.PROVIDE_MISSING_INFO;
+         if (toolCall != null){
+            String toolResult = executeTool(toolCall, context);
+            context.addToolCall(toolCall.getToolName(), toolCall.parameters, toolResult);
+//            System.out.println("Tool Result: "+toolResult+"\n\n");
+
+            if (shouldBreakLoop(toolCall, toolResult)) {
+               finalResponse = toolResult;
+               break;
+            }
+         } else {
+            finalResponse = llmResponse;
+            break;
+         }
       }
 
-      String prompt = """     
-                You are a concise classifier that maps a user's billing question to exactly one of these labels:
-                - RequestRefund
-                - CheckPlanAndRefundPolicy
-                - ConfirmPlanPrice
+      if (finalResponse != null){
+         return finalResponse;
+      } else {
+         System.out.println("AWARIA 2");
+         return getFallbackResponse();
+      }
+   }
 
-                Consider the conversation context:
-                %s
+   private boolean shouldBreakLoop(ToolCall toolCall, String toolResult){
+      if (toolCall.tool.name().startsWith("ASK_FOR_")){
+         return true;
+      }
 
-                Return ONLY the label (one of the three, nothing else).
+      if (toolCall.tool == Tool.EXTRACT_EMAIL ||
+            toolCall.tool == Tool.EXTRACT_ORDER_ID ||
+            toolCall.tool == Tool.EXTRACT_PLAN_NAME) {
+         return false;
+      }
 
-                Examples:
-                Q: "I was charged twice last month — I want a refund." => RequestRefund
-                Q: "How long do refunds take?" => CheckPlanAndRefundPolicy
-                Q: "How much does the Pro plan cost?" => ConfirmPlanPrice
-                Q: "What about Premium?" => ConfirmPlanPrice
-                Q: "I need to update my card on file." => RequestRefund
+      if (toolCall.tool == Tool.CREATE_REFUND_TICKET ||
+            toolCall.tool == Tool.GET_REFUND_POLICY ||
+            toolCall.tool == Tool.GET_PLAN_PRICE) {
+         if (toolResult == null) return false;
+         return true;
+      }
 
-                Now classify:
-                Q: "%s"
-                """.formatted(context.getHistory(), escapeForPrompt(userInput));
-      String response = llm.ask(prompt);
-//      System.out.println(response);
-      if (response == null) return Intent.UNKNOWN;
+      return false;
+   }
 
-      return switch (response.toLowerCase().trim()) {
-         case "requestrefund" -> Intent.REQUEST_REFUND;
-         case "checkplanandrefundpolicy" -> Intent.CHECK_PLAN_AND_REFUND_POLICY;
-         case "confirmplanprice" -> Intent.CONFIRM_PLAN_PRICE;
-         default -> Intent.UNKNOWN;
+   private String buildToolCallPrompt(ConversationContext context) {
+      StringBuilder prompt = new StringBuilder();
+
+      prompt.append("""
+            You are a billing assistant that can help with refunds, plan pricing, and refund policies.
+            
+            AVAILABLE TOOLS:
+            
+            EXTRACTION TOOLS (try these first when user provides information):
+            1. EXTRACT_EMAIL - Extract email address from conversation
+            2. EXTRACT_ORDER_ID - Extract order ID from conversation  
+            3. EXTRACT_PLAN_NAME - Extract plan name (pro, premium, standard)
+            
+            ACTION TOOLS (use when you have required data):
+            4. CREATE_REFUND_TICKET - Create refund ticket (requires email and order_id)
+            5. GET_REFUND_POLICY - Get refund policy for specific plan
+            6. GET_PLAN_PRICE - Get pricing for specific plan
+            
+            ASK TOOLS (use when extraction fails and you need user input):
+            7. ASK_FOR_EMAIL - Ask user to provide their email
+            8. ASK_FOR_ORDER_ID - Ask user to provide their order ID (order_123, order #123)
+            9. ASK_FOR_PLAN_NAME - Ask user to specify which plan (Pro, Standard, Premium, Any, All)
+            
+            TOOL CALLING FORMAT:
+            If you need to call a tool, respond with exactly:
+            TOOL_CALL: <TOOL_NAME>
+            
+            Otherwise, provide your final response to the user.
+            
+            CURRENT EXTRACTED DATA:
+            """);
+
+      if (context.extractedData.isEmpty()) {
+         prompt.append("No data extracted yet.\n");
+      } else {
+         context.extractedData.forEach((key, value) ->
+               prompt.append("- ").append(key).append(": ").append(value).append("\n"));
+      }
+
+      prompt.append("\nCONVERSATION HISTORY:\n");
+      prompt.append(context.getConversationText());
+
+      prompt.append("""
+            
+            DECISION PROCESS - FOLLOW THESE STEPS CAREFULLY:
+            
+            FOR REFUND REQUESTS:
+            1. Try EXTRACT_EMAIL and EXTRACT_ORDER_ID from conversation
+            2. If extraction fails for either, use ASK_FOR_EMAIL or ASK_FOR_ORDER_ID
+            3. ONLY call CREATE_REFUND_TICKET when BOTH email and order_id are available
+            
+            FOR PLAN/POLICY QUESTIONS:
+            1. Try EXTRACT_PLAN_NAME from conversation  
+            2. If extraction fails, use ASK_FOR_PLAN_NAME
+            3. Only call GET_PLAN_PRICE or GET_REFUND_POLICY when plan_name is available
+            
+            CRITICAL RULES:
+            - DO NOT call action tools (CREATE_REFUND_TICKET, GET_PLAN_PRICE, GET_REFUND_POLICY) without required data
+            - If an action tool returns "❌ Missing..." use the ASK_FOR tools it suggests
+            - Only provide final response when you have complete information
+            
+            Your response (either final answer or TOOL_CALL):
+            """);
+
+      return prompt.toString();
+   }
+
+   private ToolCall parseToolCall(String response) {
+      if (response != null && response.startsWith("TOOL_CALL:")) {
+         String toolName = response.substring(10).trim();
+         try {
+            Tool tool = Tool.valueOf(toolName);
+            return new ToolCall(tool, new HashMap<>());
+         } catch (IllegalArgumentException e) {
+            return null;
+         }
+      }
+      return null;
+   }
+
+   private String executeTool(ToolCall toolCall, ConversationContext context) {
+      return switch (toolCall.tool) {
+         case EXTRACT_EMAIL -> {
+            String email = extractEmailFromHistory(context);
+            if (email != null) {
+               context.storeData("email", email);
+               yield "✅ Extracted email: " + email;
+            }
+            yield "❌ No email found in conversation";
+         }
+
+         case EXTRACT_ORDER_ID -> {
+            String orderId = extractOrderIdFromHistory(context);
+            if (orderId != null) {
+               context.storeData("order_id", orderId);
+               yield "✅ Extracted order ID: " + orderId;
+            }
+            yield "❌ No order ID found in conversation";
+         }
+
+         case EXTRACT_PLAN_NAME -> {
+            String planName = extractPlanNameFromHistory(context);
+            if (planName != null) {
+               context.storeData("plan_name", planName);
+               yield "✅ Extracted plan: " + planName;
+            }
+            yield "❌ No plan name found in conversation";
+         }
+
+         case ASK_FOR_EMAIL -> {
+            yield "👀 To process your request, could you please provide the email associated with your account?";
+         }
+
+         case ASK_FOR_ORDER_ID -> {
+            yield "👀 Could you please provide your order ID to proceed? Formats like 'order_123' or 'Order #123' work.";
+         }
+
+         case ASK_FOR_PLAN_NAME -> {
+            yield "👀 Could you please specify which plan you are referring to (Pro, Premium, Standard)?";
+         }
+
+         case CREATE_REFUND_TICKET -> {
+            if (!context.hasData("email")) {
+               String emailCandidate = extractEmailFromHistory(context);
+               if (emailCandidate != null) {
+                  context.storeData("email", emailCandidate);
+               }
+            }
+            if (!context.hasData("order_id")) {
+               String orderCandidate = extractOrderIdFromHistory(context);
+               if (orderCandidate != null) {
+                  context.storeData("order_id", orderCandidate);
+               }
+            }
+
+            boolean hasEmail = context.hasData("email");
+            boolean hasOrder = context.hasData("order_id");
+
+            if (hasEmail && hasOrder) {
+               String email = (String) context.getData("email");
+               String orderId = (String) context.getData("order_id");
+               String ticketId = "RFD-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+               String formLink = "https://company.example.com/refund-form?ticket=" + ticketId;
+
+               context.removeOrderId();
+
+               yield String.format("""
+                 ✅ Refund request initiated for order %s.
+                 Ticket ID: %s
+                 A refund form has been sent to: %s
+                 You can also access the form directly here: %s
+                 """, orderId, ticketId, email, formLink);
+            } else if (!hasEmail && !hasOrder) {
+               yield "👀 I need both your email and order ID to process the refund. Please provide your email address and order ID.";
+            } else if (!hasEmail) {
+               yield "👀 I still need your email address to process the refund. Could you please provide the email associated with your account?";
+            } else {
+               yield "👀 I still need your order ID to process the refund. Could you please provide your order ID (e.g., order_123 or Order #123)?";
+            }
+         }
+
+         case GET_REFUND_POLICY -> {
+            String planName = null;
+            if (context.hasData("plan_name")) {
+               planName = (String) context.getData("plan_name");
+            } else {
+               planName = extractPlanNameFromHistory(context);
+               if (planName != null) {
+                  context.storeData("plan_name", planName);
+               }
+            }
+
+            if (planName != null) {
+               String result = getRefundPolicyForPlan(planName);
+               context.removePlanName();
+               yield result;
+            } else {
+               yield "👀 I need to know which plan you're asking about to provide the refund policy. Please specify Pro, Premium, or Standard.";
+            }
+         }
+
+         case GET_PLAN_PRICE -> {
+            String planName = null;
+            if (context.hasData("plan_name")) {
+               planName = (String) context.getData("plan_name");
+            } else {
+               planName = extractPlanNameFromHistory(context);
+               if (planName != null) {
+                  context.storeData("plan_name", planName);
+               }
+            }
+
+            if (planName != null) {
+               String result = getPlanPrice(planName);
+               context.removePlanName();
+               yield result;
+            } else {
+               yield "👀 I need to know which plan you're asking about to provide pricing. Please specify Pro, Premium, or Standard.";
+            }
+         }
       };
    }
 
-   private String handleRequestRefund(String userInput, ConversationContext context) {
-      String email = extractEmail(userInput);
-      String orderId = extractOrderId(userInput);
-
-      if (email == null) {
-         context.setPendingAction("REQUEST_REFUND", "email");
-         return "👀 To process your refund, could you please provide the email associated with your account?";
+   private String extractEmailFromHistory(ConversationContext context) {
+      // Search through all user messages for email
+      for (Map<String, Object> message : context.getHistory()) {
+         if ("user".equals(message.get("role"))) {
+            String content = (String) message.get("content");
+            String email = extractEmail(content);
+            if (email != null) return email;
+         }
       }
-      if (orderId == null) {
-         context.setPendingAction("REQUEST_REFUND", "order_id");
-         return "👀 Could you please provide your order ID to proceed with the refund? Formats like 'order_123' or 'Order #123' work.";
-      }
-
-      context.clearPendingAction();
-
-      String ticketId = "RFD-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
-      String formLink = "https://company.example.com/refund-form?ticket=" + ticketId;
-
-      StringBuilder sb = new StringBuilder();
-      sb.append("✅ Refund request initiated for order ").append(orderId).append(".\n");
-      sb.append("Ticket ID: ").append(ticketId).append("\n");
-
-      sb.append("A refund form has been sent to: ").append(email).append("\n");
-      sb.append("You can also access the form directly here: ").append(formLink);
-
-      // In real system, here we would send an email with the form link
-      return sb.toString();
+      return null;
    }
 
-   private String handleCheckPlanAndRefundPolicy(String userInput, ConversationContext context) {
-      String planName = extractPlanName(userInput);
-      if (planName == null) {
-         context.setPendingAction("CHECK_PLAN_AND_REFUND_POLICY", "plan_name");
-         return "👀 To provide accurate refund policy information, could you please specify which plan you are inquiring about (Pro, Premium, Standard)?";
+   private String extractOrderIdFromHistory(ConversationContext context) {
+      List<Map<String, Object>> temp_context;
+      if (context.getHistory().size()>2){
+         temp_context = context.getHistory().subList(context.getHistory().size()-2, context.getHistory().size());
       }
-
-      context.clearPendingAction();
-      return getRefundPolicyForPlan(planName);
-   }
-
-   private String handleConfirmPlanPrice(String userInput, ConversationContext context) {
-      String planName = extractPlanName(userInput);
-      if (planName == null) {
-         context.setPendingAction("CONFIRM_PLAN_PRICE", "plan_name");
-         return "👀 Could you please specify which plan you would like to know the price of (Pro, Premium, Standard)?";
+      else {
+         temp_context = context.getHistory();
       }
-
-      context.clearPendingAction();
-      return getPlanPrice(planName);
-   }
-
-   private String handleMissingInfo(String userInput, ConversationContext context) {
-      String pendingAction = context.getPendingAction();
-      String missingField = context.getMissingField();
-
-      String extractedInfo = extractMissingInfo(userInput, missingField);
-
-      if (extractedInfo != null){
-         context.clearPendingAction();
-         return switch (pendingAction) {
-            case "REQUEST_REFUND" -> handleRequestRefund(userInput, context);
-            case "CHECK_PLAN_AND_REFUND_POLICY" -> handleCheckPlanAndRefundPolicy(userInput, context);
-            case "CONFIRM_PLAN_PRICE" -> handleConfirmPlanPrice(userInput, context);
-            default -> getFallbackResponse();
-         };
-      }else{
-         return switch (missingField){
-            case "email" -> "👀 I couldn't identify a valid email in your response. Please provide the email associated with your account.";
-            case "order_id" -> "👀 I still need your order ID to proceed with the refund. Please provide it.";
-            case "plan_name" -> "👀 I couldn't determine the plan name from your response. Please specify which plan you are referring to (Pro, Premium, Standard).";
-            default -> "👀 I need some additional info to help you. " + getFallbackResponse();
-         };
+      for (Map<String, Object> message : temp_context) {
+         if ("user".equals(message.get("role"))) {
+            String content = (String) message.get("content");
+            String orderId = extractOrderId(content);
+            if (orderId != null) return orderId;
+         }
       }
+      return null;
    }
 
-   private String extractMissingInfo(String userInput, String missingField){
-      return switch (missingField){
-         case "email" -> extractEmail(userInput);
-         case "order_id" -> extractOrderId(userInput);
-         case "plan_name" -> extractPlanName(userInput);
-         default -> null;
-      };
+   private String extractPlanNameFromHistory(ConversationContext context) {
+      List<Map<String, Object>> temp_context;
+      if (context.getHistory().size()>2){
+         temp_context = context.getHistory().subList(context.getHistory().size()-2, context.getHistory().size());
+      }
+      else {
+         temp_context = context.getHistory();
+      }
+      for (Map<String, Object> message : temp_context) {
+         if ("user".equals(message.get("role"))) {
+            String content = (String) message.get("content");
+            String planName = extractPlanName(content);
+            if (planName != null) return planName;
+         }
+      }
+      return null;
    }
-
 
    private String getRefundPolicyForPlan(String planName) {
       String proPolicy = "Pro plan: refunds processed within 3 business days.";
@@ -253,8 +447,7 @@ public class BillingAgent implements Agent {
       return sb.toString();
    }
 
-   private String getPlanPrice(String planName){
-
+   private String getPlanPrice(String planName) {
       String proPrice = "$49.99/month";
       String premiumPrice = "$34.99/month";
       String standardPrice = "$20.00/month";
@@ -285,9 +478,9 @@ public class BillingAgent implements Agent {
       if (s == null) return "";
       return s.replace("\"", "\\\"").replace("\n", " ");
    }
+
    private String extractOrderId(String text) {
       if (text == null) return null;
-      // simple pattern: order_123 or Order #123
       String lower = text.toLowerCase(Locale.ROOT);
       for (String token : lower.split("\\s+")) {
          if (token.startsWith("order_") || token.startsWith("order#") || token.startsWith("#")) return token;
@@ -299,7 +492,6 @@ public class BillingAgent implements Agent {
       if (text == null) return null;
       int at = text.indexOf('@');
       if (at <= 0) return null;
-      // naive: grab substring around @
       String[] tokens = text.split("\\s+|,");
       for (String t : tokens) {
          if (t.contains("@") && t.contains(".")) return t.replaceAll("[^A-Za-z0-9@._-]", "");
@@ -309,11 +501,11 @@ public class BillingAgent implements Agent {
 
    private String extractPlanName(String text) {
       if (text == null) return null;
-      String lower = text.toLowerCase(Locale.ROOT);
+      String lower = text.toLowerCase(Locale.ROOT).trim();
       if (lower.contains("pro")) return "pro";
       if (lower.contains("standard")) return "standard";
       if (lower.contains("premium")) return "premium";
-      if (lower.contains("any")||lower.contains("all")) return "all";
+      if (lower.contains("any") || lower.contains("all")) return "all";
       return null;
    }
 }
