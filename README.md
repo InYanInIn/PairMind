@@ -6,7 +6,7 @@ PairMind is a Spring Boot–based AI customer support system that routes user qu
 
 ## 🧩 1. Add Your API Key
 
-Edit the following line with your Gemini API key at file:
+Edit the following file with your Gemini API key:
 
 ```
 src/main/resources/application.properties
@@ -73,6 +73,38 @@ Make sure the following are installed:
 
 ---
 
+### 📚 Documentation Base (RAG Knowledge Source)
+
+This project’s **RAG module** is powered by a collection of internal technical and billing documents from the *Company AI Support System*.
+These documents describe how the company’s intelligent support platform works — including:
+
+* 🧠 **Architecture overview** — Java 17 + Spring Boot + Maven system integrated with **Gemini API**
+* ⚙️ **Technical operations** — installation, configuration, troubleshooting, and API usage
+* 🔐 **External API endpoints** — authentication, user management, and order operations
+* 🧾 **Error handling and best practices** — retry logic, API limits, logging, and debugging
+
+The RAG system splits these docs into small **semantic chunks**, generates **embeddings**, and retrieves the most relevant context for each user query.
+This enables the **Technical Agent** to answer based only on verified internal documentation — ensuring factual, consistent, and company-aligned responses.
+
+---
+
+### 💬 Example User Questions
+
+Here are some example questions that the RAG system can handle using the internal documentation:
+
+#### Technical Support Questions
+
+* How to uninstall the app?
+* How to use T92 in World of Tanks?
+* How to send 12,000 requests per minute using the API?
+* How to use 9,000,000 tokens per second?
+
+#### Billing & Account Questions
+
+* I want to make a refund
+* How much time does it take to process a refund?
+* How much does the Pro plan cost?
+* What about the Standard plan?
 
 
 ---
