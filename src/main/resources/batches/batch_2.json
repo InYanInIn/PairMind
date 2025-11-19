@@ -1,0 +1,213 @@
+{
+  "requests" : [ {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Cause: File missing or corrupted.\nSolution: Restore configuration from backup. Validate syntax and encoding of config files.\n\nProblem: Application shows blank page in browser.\nCause: Frontend build missing or incorrect URL mapping.\nSolution: Rebuild frontend assets. Verify web server configuration and routing.\n"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Solution: Rebuild frontend assets. Verify web server configuration and routing.\n\nProblem: Application fails after Docker deployment.\nCause: Missing environment variables or volume mounts.\nSolution: Set all required environment variables. Mount volumes correctly. Check Docker logs for errors.\n\nProblem: Notifications arrive multiple times."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "\nProblem: Notifications arrive multiple times.\nCause: Event processing logic triggered repeatedly.\nSolution: Ensure idempotency in event handling. Add checks to prevent duplicate notifications.\n\nProblem: Data export fails.\nCause: Insufficient disk space or incorrect format."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Problem: Data export fails.\nCause: Insufficient disk space or incorrect format.\nSolution: Verify available disk space. Ensure export format matches requirements.\n\nProblem: Dependency version conflict.\nCause: Multiple libraries using different versions of same dependency.\nSolution: Use `mvn dependency:tree` to find conflicts. Align versions in pom.xml."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Cause: Multiple libraries using different versions of same dependency.\nSolution: Use `mvn dependency:tree` to find conflicts. Align versions in pom.xml.\n\nProblem: High CPU usage observed.\nCause: Infinite loop or heavy computation.\nSolution: Profile the application. Optimize algorithms. Limit concurrent tasks.\n"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Solution: Profile the application. Optimize algorithms. Limit concurrent tasks.\n\nProblem: Feature toggles not applied.\nCause: Configuration cache not refreshed.\nSolution: Clear cache or restart service. Verify feature toggle keys.\n\nProblem: SSL handshake fails intermittently."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "\nProblem: SSL handshake fails intermittently.\nCause: Network issues or outdated certificates.\nSolution: Check network stability. Update certificates. Ensure correct truststore is used.\n\nProblem: System clock out of sync.\nCause: Server NTP service stopped."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Problem: System clock out of sync.\nCause: Server NTP service stopped.\nSolution: Start NTP service. Ensure system clock is synchronized.\n\nProblem: Logs contain repeated warnings about deprecated API.\nCause: Using old API endpoints.\nSolution: Update code to use new API version. Remove deprecated calls."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Cause: Using old API endpoints.\nSolution: Update code to use new API version. Remove deprecated calls.\n\nProblem: CSV import fails.\nCause: Incorrect delimiter or encoding.\nSolution: Verify delimiter and encoding. Ensure header row matches expected fields.\n"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Solution: Verify delimiter and encoding. Ensure header row matches expected fields.\n\nProblem: User session expires immediately.\nCause: Session timeout too short or cookies misconfigured.\nSolution: Adjust session timeout. Verify cookies are sent and received correctly.\n\nProblem: External service certificate expired."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "\nProblem: External service certificate expired.\nCause: TLS certificate not renewed.\nSolution: Renew certificate. Update truststore if necessary.\n\nProblem: Application memory leak detected.\nCause: Unreleased objects or long-lived collections."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Problem: Application memory leak detected.\nCause: Unreleased objects or long-lived collections.\nSolution: Profile memory usage. Fix code to release unused objects. Consider GC tuning.\n\nProblem: Backup fails.\nCause: Insufficient permissions or disk full.\nSolution: Verify backup path permissions. Ensure enough disk space. Check backup logs."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Cause: Insufficient permissions or disk full.\nSolution: Verify backup path permissions. Ensure enough disk space. Check backup logs.\n\nProblem: Search functionality slow or inaccurate.\nCause: Index not updated or corrupted.\nSolution: Rebuild search index. Optimize queries. Monitor indexing process.\n"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Solution: Rebuild search index. Optimize queries. Monitor indexing process.\n\nProblem: Application does not handle large files.\nCause: Input buffer too small or processing inefficient.\nSolution: Increase buffer size. Optimize file processing logic.\n\nProblem: Error during data migration."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "\nProblem: Error during data migration.\nCause: Schema mismatch or missing data.\nSolution: Validate source and target schemas. Handle missing data. Test migration scripts.\n\nProblem: Notifications not delivered to mobile app.\nCause: Push notification service misconfigured or API key invalid."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Problem: Notifications not delivered to mobile app.\nCause: Push notification service misconfigured or API key invalid.\nSolution: Verify push service settings and API key. Test with sandbox environment.\n\nProblem: System logs missing timestamps.\nCause: Logging format misconfigured.\nSolution: Update logging pattern to include timestamp. Verify system clock."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Cause: Logging format misconfigured.\nSolution: Update logging pattern to include timestamp. Verify system clock.\n\nProblem: Concurrent modification exceptions in collections.\nCause: Multiple threads modifying same collection without synchronization.\nSolution: Use thread-safe collections or synchronize access properly.\n"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Solution: Use thread-safe collections or synchronize access properly.\n\nProblem: Application cannot resolve hostname.\nCause: DNS issues or network misconfiguration.\nSolution: Test DNS resolution. Verify network settings. Update /etc/hosts if needed.\n\nProblem: Configuration changes not applied after restart."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "\nProblem: Configuration changes not applied after restart.\nCause: Cached configuration or old files.\nSolution: Clear cache and temporary files. Ensure latest configs are deployed.\n\nProblem: User receives \"Access Denied\" error.\nCause: Role missing or token expired."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Problem: User receives \"Access Denied\" error.\nCause: Role missing or token expired.\nSolution: Verify roles and permissions. Refresh token if necessary.\n\nProblem: Scheduled report not generated.\nCause: Job failed silently or misconfigured schedule.\nSolution: Check scheduler logs. Validate report generation script."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Cause: Job failed silently or misconfigured schedule.\nSolution: Check scheduler logs. Validate report generation script.\n\nProblem: Error writing to log file.\nCause: File locked or permission denied.\nSolution: Ensure log file is writable. Close other processes holding the file.\n"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Solution: Ensure log file is writable. Close other processes holding the file.\n\nProblem: Dependency download fails.\nCause: Network connectivity or repository unavailable.\nSolution: Check internet connection. Verify repository URL. Retry download.\n\nProblem: Application shows \"Service Unavailable\"."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "\nProblem: Application shows \"Service Unavailable\".\nCause: Downstream service unreachable.\nSolution: Verify dependencies. Restart services if needed.\n\nProblem: File permissions reset unexpectedly.\nCause: Automated scripts or deployment process."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Problem: File permissions reset unexpectedly.\nCause: Automated scripts or deployment process.\nSolution: Review scripts. Set correct permissions post-deployment.\n\nProblem: Application does not handle unicode correctly.\nCause: Encoding mismatch.\nSolution: Ensure UTF-8 encoding is used for all files and streams."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Cause: Encoding mismatch.\nSolution: Ensure UTF-8 encoding is used for all files and streams.\n\nProblem: Long-running tasks get killed.\nCause: System resource limits or timeouts.\nSolution: Increase allowed CPU/memory or break tasks into smaller jobs.\n"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Solution: Increase allowed CPU/memory or break tasks into smaller jobs.\n\nProblem: Application cannot connect to Redis cache.\nCause: Redis server down or password incorrect.\nSolution: Start Redis. Verify password and host/port configuration.\n\nProblem: Email bounce backs."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "\nProblem: Email bounce backs.\nCause: Invalid email addresses or SMTP misconfiguration.\nSolution: Validate emails. Check SMTP logs and configuration.\n\nProblem: Web frontend shows broken layout.\nCause: Missing CSS/JS files or caching issue."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Problem: Web frontend shows broken layout.\nCause: Missing CSS/JS files or caching issue.\nSolution: Clear browser cache. Ensure static files deployed correctly.\n\nProblem: Background worker crashes.\nCause: Unhandled exception.\nSolution: Add proper exception handling. Monitor logs for root cause."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Cause: Unhandled exception.\nSolution: Add proper exception handling. Monitor logs for root cause.\n\nProblem: API rate limit reset delayed.\nCause: External service issue.\nSolution: Retry later or contact service provider.\n"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Solution: Retry later or contact service provider.\n\nProblem: Error saving user preferences.\nCause: Database constraint violation.\nSolution: Validate input. Ensure database schema matches application requirements."
+      } ]
+    }
+  } ]
+}

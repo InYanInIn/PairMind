@@ -19,6 +19,7 @@ public class BatchGenerator {
       int batchNum = 0;
       for (int i = 0; i < texts.size(); i += BATCH_SIZE) {
          int end = Math.min(i + BATCH_SIZE, texts.size());
+
          List<String> batchTexts = texts.subList(i, end);
 
          ObjectNode root = mapper.createObjectNode();

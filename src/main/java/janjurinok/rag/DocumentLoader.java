@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import janjurinok.database.QdrantService;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -19,9 +20,11 @@ public class DocumentLoader {
    private static final int BATCH_SIZE = 50;
 
    private final EmbeddingGenerator embeddingGenerator;
+   private final QdrantService qdrantService;
 
-   public DocumentLoader(EmbeddingGenerator embeddingGenerator) {
+   public DocumentLoader(EmbeddingGenerator embeddingGenerator, QdrantService qdrantService) {
       this.embeddingGenerator = embeddingGenerator;
+      this.qdrantService = qdrantService;
    }
 
 
@@ -37,8 +40,12 @@ public class DocumentLoader {
          if (file.isFile() && file.getName().endsWith(".txt")) {
             List<String> lines = Files.readAllLines(file.toPath());
             for (int i = 0; i < lines.size(); i += 5) {
-               String blockText = String.join("\n", lines.subList(i, Math.min(i + 5, lines.size())));
-               allBlocks.add(blockText);
+               int startContext = Math.max(0, i - 1);
+               int endContext = Math.min(lines.size(), i + 5 + 1);
+               String contextText = String.join("\n", lines.subList(startContext, endContext));
+
+
+               allBlocks.add(contextText);
                blockSources.add(file.getName());
             }
          }
@@ -54,7 +61,7 @@ public class DocumentLoader {
          chunks.add(chunk);
       }
 
-      saveChunksToJson(chunks, "src/main/resources/chunks.json");
+//      saveChunksToJson(chunks, "src/main/resources/chunks.json");
 
       return chunks;
    }
@@ -132,17 +139,30 @@ public class DocumentLoader {
    }
 
 
-   public List<float[]> loadAllAgents(String dirPath) throws IOException {
-   String tech_query = """
-                  Technical support and product usage questions:
-                  - Installing and setting up the application or service
-                  - Troubleshooting crashes, errors, performance or startup issues
-                  - Configuration, environment variables, API keys and integration steps
-                  - Running commands, logs analysis, debugging steps, and stack traces
-                  - Updating, upgrading, or uninstalling the software
-                  - Connectivity, database, authentication and deployment problems
-                  - "My app crashes on launch", "How to enable X feature", "Where are the logs?"
-                  """;
+   public List<float[]> loadAllAgents(String AGENT_COLLECTION) throws Exception {
+
+      if (qdrantService.collectionExists(AGENT_COLLECTION)) {
+         List<DocumentChunk> existing_chunks = qdrantService.getAllChunks(AGENT_COLLECTION);
+         if (existing_chunks.size() >= 2) {
+            System.out.println("✅ Agent profiles already exist in Qdrant collection: " + AGENT_COLLECTION);
+            List<float[]> agent_embeddings = new ArrayList<>();
+            for (DocumentChunk chunk : existing_chunks) {
+               agent_embeddings.add(chunk.getEmbedding());
+            }
+            return agent_embeddings;
+         }
+      }
+
+      String tech_query = """
+                     Technical support and product usage questions:
+                     - Installing and setting up the application or service
+                     - Troubleshooting crashes, errors, performance or startup issues
+                     - Configuration, environment variables, API keys and integration steps
+                     - Running commands, logs analysis, debugging steps, and stack traces
+                     - Updating, upgrading, or uninstalling the software
+                     - Connectivity, database, authentication and deployment problems
+                     - "My app crashes on launch", "How to enable X feature", "Where are the logs?"
+                     """;
       String bill_query = """
                   Billing, payments and subscription questions:
                   - Refund requests, charge disputes and billing errors
@@ -163,8 +183,14 @@ public class DocumentLoader {
       DocumentChunk tech_chunk = new DocumentChunk(tech_query, tech_queryEmbedding, "technical_agent");
       DocumentChunk bill_chunk = new DocumentChunk(bill_query, bill_queryEmbedding, "billing_agent");
 
-      saveChunksToJson(List.of(tech_chunk), "src/main/resources/agent_profiles/tech_chunk.json");
-      saveChunksToJson(List.of(bill_chunk), "src/main/resources/agent_profiles/bill_chunk.json");
+      int vectorSize = tech_queryEmbedding.length;
+      qdrantService.createCollectionIfNotExists(AGENT_COLLECTION, vectorSize);
+      qdrantService.upsertChunks(AGENT_COLLECTION, List.of(tech_chunk, bill_chunk));
+
+      System.out.println("✅ Upserted agent profiles into Qdrant collection: " + AGENT_COLLECTION);
+
+//      saveChunksToJson(List.of(tech_chunk), "src/main/resources/agent_profiles/tech_chunk.json");
+//      saveChunksToJson(List.of(bill_chunk), "src/main/resources/agent_profiles/bill_chunk.json");
 
       List<float[]> agent_embeddings = new ArrayList<>();
       agent_embeddings.add(tech_queryEmbedding);

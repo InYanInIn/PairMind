@@ -1,0 +1,353 @@
+{
+  "requests" : [ {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "mvn exec:java -Dexec.mainClass=\"com.example.agents.Main\"\n\nTo start the REST API server (if implemented):\nmvn spring-boot:run\n\nWhen the application starts, you should see:\nStart chatting (type 'exit' to quit):"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "When the application starts, you should see:\nStart chatting (type 'exit' to quit):\n\nTroubleshooting Installation Issues\nProblem: “Port already in use” when running Spring Boot.\nSolution: Change the server port in application.properties:\nserver.port=8081"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Solution: Change the server port in application.properties:\nserver.port=8081\n\nProblem: “NullPointerException in ConfigLoader.”\nCause: Missing environment variable or missing configuration file.\nFix: Ensure GEMINI_API_KEY is set and file application.properties exists.\n"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Fix: Ensure GEMINI_API_KEY is set and file application.properties exists.\n\nProblem: “Model not found: gemini-2.5-flash.”\nCause: Incorrect model name or outdated SDK.\nFix: Check your dependency version and use gemini-2.5-flash or a supported model.\n\nProblem: “SSLHandshakeException.”"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "\nProblem: “SSLHandshakeException.”\nFix: Ensure system time and date are correct. This error can occur if your local SSL certificates are outdated.\n\nProblem: “Maven build failed.”\nFix: Try:\nmvn clean install -U"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Fix: Try:\nmvn clean install -U\nto force Maven to re-download dependencies.\n\nUpdating the Application\nTo update the project to the latest version:\ngit pull origin main"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "To update the project to the latest version:\ngit pull origin main\nmvn clean install\n\nIf you made local changes, commit or stash them first:\ngit add .\ngit commit -m \"local update\""
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "git add .\ngit commit -m \"local update\"\ngit pull --rebase\n\nUninstallation\nTo remove the system:\n"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "To remove the system:\n\n1. Delete the project folder:\n   rm -rf ai-support-system\n2. Optionally, remove cached dependencies:\n   rm -rf ~/.m2/repository/com/example/agents\n"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "   rm -rf ~/.m2/repository/com/example/agents\n\nSupport\nIf you encounter problems not covered here:\n\n* Check the troubleshooting.txt document for runtime issues.\n* Verify your API key and internet connection."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "* Check the troubleshooting.txt document for runtime issues.\n* Verify your API key and internet connection.\n* Contact the internal DevOps team at [support@company.ai](mailto:support@company.ai)\n\nEnd of Installation Guide\n---"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Integration Tips\n----------------\n\n1. API Requests\n- Always include a timeout of at least 5 seconds when calling external APIs.\n- Use exponential backoff for retry logic in case of transient errors."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "- Always include a timeout of at least 5 seconds when calling external APIs.\n- Use exponential backoff for retry logic in case of transient errors.\n- Avoid sending more than 10 requests per second to prevent hitting rate limits.\n- When possible, batch requests together to reduce the number of HTTP calls.\n- Log both request and response bodies during development to help debug issues.\n\n2. Authentication"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "\n2. Authentication\n- Always use secure tokens or API keys for authentication.\n- Do not hardcode credentials; store them in environment variables.\n- Rotate API keys periodically to reduce security risks.\n- Use HTTPS for all API communications to encrypt sensitive data.\n- Validate the token expiry before making requests to avoid unnecessary failures."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "- Use HTTPS for all API communications to encrypt sensitive data.\n- Validate the token expiry before making requests to avoid unnecessary failures.\n\n3. Webhooks\n- Ensure your webhook endpoint responds within 3 seconds to prevent retries.\n- Always verify the signature of incoming webhook requests to ensure authenticity.\n- Log incoming webhooks for auditing and debugging purposes."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "- Always verify the signature of incoming webhook requests to ensure authenticity.\n- Log incoming webhooks for auditing and debugging purposes.\n- Use idempotency keys if your system might receive duplicate webhook events.\n- Test your webhook endpoint with mock payloads before connecting it to production.\n\n4. Error Handling\n- Catch network-related exceptions and handle them gracefully."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "4. Error Handling\n- Catch network-related exceptions and handle them gracefully.\n- For API responses, check HTTP status codes and handle each appropriately:\n  - 2xx — success\n  - 4xx — client error (fix request)\n  - 5xx — server error (retry with backoff)\n- Provide clear error messages to downstream systems or logs."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "  - 5xx — server error (retry with backoff)\n- Provide clear error messages to downstream systems or logs.\n- Implement retry policies only for transient errors; do not retry client-side mistakes.\n\n5. Data Formats\n- Always validate JSON or XML payloads against a schema before processing.\n- Sanitize all input from external sources to prevent injection attacks."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "- Always validate JSON or XML payloads against a schema before processing.\n- Sanitize all input from external sources to prevent injection attacks.\n- Use consistent date/time formats (ISO 8601 recommended) across systems.\n- Escape special characters in strings when sending data to APIs.\n\n6. Rate Limiting\n- Respect the API provider’s rate limits."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "6. Rate Limiting\n- Respect the API provider’s rate limits.\n- Implement a client-side rate limiter to prevent accidental overloading.\n- Use backoff strategies when rate limits are exceeded.\n- Provide informative logs when requests are throttled.\n\n7. Logging and Monitoring"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "\n7. Logging and Monitoring\n- Log all integration errors with context for easier debugging.\n- Monitor API response times and failure rates.\n- Set up alerts for repeated failures or latency spikes.\n- Store logs in a centralized system for auditing and troubleshooting.\n"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "- Store logs in a centralized system for auditing and troubleshooting.\n\n8. Security Considerations\n- Never log sensitive information like passwords or tokens in plaintext.\n- Validate SSL/TLS certificates to prevent man-in-the-middle attacks.\n- Limit the IP addresses allowed to access your endpoints where possible.\n- Keep dependencies up to date to prevent vulnerabilities."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "- Limit the IP addresses allowed to access your endpoints where possible.\n- Keep dependencies up to date to prevent vulnerabilities.\n\n9. Versioning\n- Include API version in all requests if the service supports it.\n- Test integrations against new API versions in a staging environment first.\n- Deprecate old API calls gradually and provide clear migration paths."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "- Test integrations against new API versions in a staging environment first.\n- Deprecate old API calls gradually and provide clear migration paths.\n\n10. Testing\n- Write automated tests for your integration flows.\n- Mock external services during unit tests to avoid hitting real APIs.\n- Perform end-to-end tests in a staging environment to catch real-world issues."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "- Mock external services during unit tests to avoid hitting real APIs.\n- Perform end-to-end tests in a staging environment to catch real-world issues.\n- Test error scenarios explicitly to ensure proper handling.\n\n11. Documentation\n- Maintain clear documentation for integration setup steps.\n- Include examples for request payloads and expected responses."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "- Maintain clear documentation for integration setup steps.\n- Include examples for request payloads and expected responses.\n- Document error codes and recommended handling procedures.\n- Update documentation whenever the integration logic or external API changes.\n\n12. Deployment Tips\n- Use environment-specific configurations for dev, staging, and production."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "12. Deployment Tips\n- Use environment-specific configurations for dev, staging, and production.\n- Never deploy untested changes directly to production.\n- Feature flags can help roll out integrations gradually.\n- Monitor performance after deployment and adjust configurations as needed.\n\n13. Miscellaneous"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "\n13. Miscellaneous\n- Use consistent naming conventions for resources and endpoints.\n- Avoid long-running synchronous calls; use asynchronous processing where possible.\n- Handle retries and failures in a way that maintains data consistency.\n- Review integration logs regularly to detect anomalies early.\n- Keep a checklist of common pitfalls to prevent repeated mistakes."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "- Review integration logs regularly to detect anomalies early.\n- Keep a checklist of common pitfalls to prevent repeated mistakes.\n\nEnd of Integration Tips\n----------------------"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Troubleshooting Notes\n---------------------\n\nProblem: Application fails to start with \"NullPointerException in ConfigLoader\".\nCause: Missing environment variable CONFIG_PATH.\nSolution: Set CONFIG_PATH=/etc/app/config.json before running the application. Ensure the file exists and is readable."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Cause: Missing environment variable CONFIG_PATH.\nSolution: Set CONFIG_PATH=/etc/app/config.json before running the application. Ensure the file exists and is readable.\n\nProblem: User cannot log in.\nCause: Outdated authentication token or incorrect credentials.\nSolution: Ask user to re-login. If using API, refresh the token via POST /users/login endpoint. Verify username and password.\n"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Solution: Ask user to re-login. If using API, refresh the token via POST /users/login endpoint. Verify username and password.\n\nProblem: Application crashes immediately after launch.\nCause: Missing dependencies or incorrect Java version.\nSolution: Verify that Java 17+ is installed. Run `mvn clean install` to resolve dependencies. Check logs for missing jar files.\n\nProblem: \"Port already in use\" error on startup."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "\nProblem: \"Port already in use\" error on startup.\nCause: The default server port is occupied by another process.\nSolution: Edit application.properties and set `server.port` to an available port. Restart the application.\n\nProblem: Cannot connect to the database.\nCause: Incorrect database URL, credentials, or database server is down."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Problem: Cannot connect to the database.\nCause: Incorrect database URL, credentials, or database server is down.\nSolution: Check database server status. Verify URL, username, and password in application.properties. Test connection with a database client.\n\nProblem: API returns 401 Unauthorized.\nCause: Invalid or expired authentication token.\nSolution: Generate a new token via login endpoint. Ensure the token is sent in the Authorization header as `Bearer <token>`."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Cause: Invalid or expired authentication token.\nSolution: Generate a new token via login endpoint. Ensure the token is sent in the Authorization header as `Bearer <token>`.\n\nProblem: API returns 404 Not Found.\nCause: Requested resource does not exist or incorrect endpoint.\nSolution: Verify endpoint URL and resource IDs. Check API reference for correct paths.\n"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Solution: Verify endpoint URL and resource IDs. Check API reference for correct paths.\n\nProblem: API returns 429 Too Many Requests.\nCause: Exceeded rate limits for API calls.\nSolution: Implement exponential backoff or reduce request frequency. Check API documentation for limits.\n\nProblem: Slow response from API endpoints."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "\nProblem: Slow response from API endpoints.\nCause: High server load or network latency.\nSolution: Retry the request. Implement caching for frequent requests. Check server logs for performance bottlenecks.\n\nProblem: Webhooks fail to deliver events.\nCause: Endpoint not responding in time or invalid URL."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Problem: Webhooks fail to deliver events.\nCause: Endpoint not responding in time or invalid URL.\nSolution: Ensure webhook endpoint responds within 3 seconds. Use HTTPS and valid certificate. Test endpoint with curl or Postman.\n\nProblem: Application memory usage is too high.\nCause: Large datasets loaded into memory or memory leaks.\nSolution: Optimize data handling. Use pagination for API requests. Profile the application with Java VisualVM."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Cause: Large datasets loaded into memory or memory leaks.\nSolution: Optimize data handling. Use pagination for API requests. Profile the application with Java VisualVM.\n\nProblem: Unexpected behavior after application update.\nCause: Configuration files not compatible with new version.\nSolution: Backup configuration files before update. Read release notes for migration steps. Reset configs if necessary.\n"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Solution: Backup configuration files before update. Read release notes for migration steps. Reset configs if necessary.\n\nProblem: Logging output missing or incomplete.\nCause: Logging configuration incorrect or log level too high.\nSolution: Check logback.xml or log4j2.xml settings. Set appropriate log level (INFO or DEBUG) and ensure log files are writable.\n\nProblem: Email notifications not sent."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "\nProblem: Email notifications not sent.\nCause: SMTP server unreachable or credentials incorrect.\nSolution: Verify SMTP server host, port, username, and password. Check network connectivity. Test sending email with a client.\n\nProblem: File upload fails.\nCause: File size exceeds limit or invalid file type."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Problem: File upload fails.\nCause: File size exceeds limit or invalid file type.\nSolution: Check max upload size in application.properties. Verify allowed file types. Ensure correct multipart/form-data request format.\n\nProblem: Data not syncing between systems.\nCause: API token expired or mapping errors.\nSolution: Refresh API token. Verify data mappings and field names. Check logs for sync errors."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Cause: API token expired or mapping errors.\nSolution: Refresh API token. Verify data mappings and field names. Check logs for sync errors.\n\nProblem: Application logs show \"Permission Denied\".\nCause: Insufficient file or directory permissions.\nSolution: Grant read/write permissions to the application user. Avoid running as root if possible.\n"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Solution: Grant read/write permissions to the application user. Avoid running as root if possible.\n\nProblem: SSL/TLS errors when connecting to API.\nCause: Invalid certificate or incompatible protocol.\nSolution: Verify certificate validity. Update Java keystore with CA certificates. Ensure TLS 1.2+ is enabled.\n\nProblem: Unexpected shutdown on idle."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "\nProblem: Unexpected shutdown on idle.\nCause: Server power settings or memory issues.\nSolution: Check server uptime settings. Monitor memory usage. Consider running the application inside a process manager.\n\nProblem: Cached data not updating.\nCause: Stale cache or improper cache invalidation."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Problem: Cached data not updating.\nCause: Stale cache or improper cache invalidation.\nSolution: Clear cache manually. Implement proper cache invalidation strategy. Check caching library documentation.\n\nProblem: Failed to parse JSON response.\nCause: API returned malformed JSON or unexpected structure.\nSolution: Validate API response. Ensure correct parsing logic. Handle optional fields gracefully."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Cause: API returned malformed JSON or unexpected structure.\nSolution: Validate API response. Ensure correct parsing logic. Handle optional fields gracefully.\n\nProblem: User permissions not applied.\nCause: Role assignment not propagated.\nSolution: Check role mapping and synchronization logic. Reapply roles if necessary.\n"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Solution: Check role mapping and synchronization logic. Reapply roles if necessary.\n\nProblem: Application logs show \"Connection Refused\".\nCause: Target server offline or network blocked by firewall.\nSolution: Verify server status and network rules. Test connectivity with ping or telnet.\n\nProblem: Timeout while calling external service."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "\nProblem: Timeout while calling external service.\nCause: Network latency or service overload.\nSolution: Increase timeout setting. Retry request. Monitor service health.\n\nProblem: Scheduled tasks not running.\nCause: Cron jobs misconfigured or application scheduler failed."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Problem: Scheduled tasks not running.\nCause: Cron jobs misconfigured or application scheduler failed.\nSolution: Verify task scheduling configuration. Check logs for scheduler errors.\n\nProblem: Error reading configuration file.\nCause: File missing or corrupted.\nSolution: Restore configuration from backup. Validate syntax and encoding of config files."
+      } ]
+    }
+  } ]
+}

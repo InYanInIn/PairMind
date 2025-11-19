@@ -1,0 +1,353 @@
+{
+  "requests" : [ {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "API Reference\n-------------\n\nBase URL: https://api.company.com/v1\n\nAuthentication:"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "\nAuthentication:\n---------------\n- All requests require an API key in the header:\n  Authorization: Bearer <API_KEY>\n- API keys are generated in the dashboard under \"Settings → API Keys\".\n- Tokens expire after 30 days. Refresh by generating a new key."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "- API keys are generated in the dashboard under \"Settings → API Keys\".\n- Tokens expire after 30 days. Refresh by generating a new key.\n\nEndpoints:\n----------\n\n1. POST /users/login"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "\n1. POST /users/login\n   Description: Authenticates a user and returns a session token.\n   Request Body:\n   {\n       \"username\": \"string\",\n       \"password\": \"string\""
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "       \"username\": \"string\",\n       \"password\": \"string\"\n   }\n   Response:\n   {\n       \"token\": \"string\",\n       \"expires_in\": 3600"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "       \"token\": \"string\",\n       \"expires_in\": 3600\n   }\n   Common Errors:\n   - 400 Bad Request — missing username or password\n   - 401 Unauthorized — invalid credentials\n"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "   - 401 Unauthorized — invalid credentials\n\n2. POST /users/logout\n   Description: Logs out the current user and invalidates the session token.\n   Headers: Authorization: Bearer <token>\n   Response:\n   {"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "   Response:\n   {\n       \"status\": \"success\"\n   }\n   Common Errors:\n   - 401 Unauthorized — invalid token\n   - 403 Forbidden — token already invalidated"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "   - 401 Unauthorized — invalid token\n   - 403 Forbidden — token already invalidated\n\n3. GET /users/me\n   Description: Returns information about the authenticated user.\n   Headers: Authorization: Bearer <token>\n   Response:"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "   Headers: Authorization: Bearer <token>\n   Response:\n   {\n       \"id\": \"user_123\",\n       \"username\": \"john_doe\",\n       \"email\": \"john@example.com\",\n       \"plan\": \"pro\","
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "       \"email\": \"john@example.com\",\n       \"plan\": \"pro\",\n       \"created_at\": \"2025-01-01T12:00:00Z\"\n   }\n   Common Errors:\n   - 401 Unauthorized — invalid token\n"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "   - 401 Unauthorized — invalid token\n\n4. GET /orders\n   Description: Retrieves a list of orders for the authenticated user.\n   Headers: Authorization: Bearer <token>\n   Query Parameters:\n       - page (int) — page number, default 1"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "   Query Parameters:\n       - page (int) — page number, default 1\n       - limit (int) — number of results per page, default 20\n   Response:\n   [\n       {\n           \"id\": \"order_123\","
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "       {\n           \"id\": \"order_123\",\n           \"status\": \"completed\",\n           \"total\": 49.99,\n           \"currency\": \"USD\",\n           \"created_at\": \"2025-02-15T09:30:00Z\"\n       },"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "           \"created_at\": \"2025-02-15T09:30:00Z\"\n       },\n       ...\n   ]\n   Common Errors:\n   - 401 Unauthorized — invalid token\n   - 404 Not Found — no orders found"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "   - 401 Unauthorized — invalid token\n   - 404 Not Found — no orders found\n\n5. GET /orders/{id}\n   Description: Retrieve details of a specific order.\n   Headers: Authorization: Bearer <token>\n   Response:"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "   Headers: Authorization: Bearer <token>\n   Response:\n   {\n       \"id\": \"order_123\",\n       \"status\": \"completed\",\n       \"items\": [\n           { \"product_id\": \"prod_1\", \"quantity\": 2, \"price\": 19.99 },"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "       \"items\": [\n           { \"product_id\": \"prod_1\", \"quantity\": 2, \"price\": 19.99 },\n           { \"product_id\": \"prod_2\", \"quantity\": 1, \"price\": 9.99 }\n       ],\n       \"total\": 49.97,\n       \"currency\": \"USD\",\n       \"created_at\": \"2025-02-15T09:30:00Z\","
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "       \"currency\": \"USD\",\n       \"created_at\": \"2025-02-15T09:30:00Z\",\n       \"shipping_address\": \"123 Main St, City, Country\"\n   }\n   Common Errors:\n   - 401 Unauthorized — invalid token\n   - 404 Not Found — order ID does not exist"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "   - 401 Unauthorized — invalid token\n   - 404 Not Found — order ID does not exist\n\n6. POST /orders\n   Description: Create a new order.\n   Headers: Authorization: Bearer <token>\n   Request Body:"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "   Headers: Authorization: Bearer <token>\n   Request Body:\n   {\n       \"items\": [\n           { \"product_id\": \"prod_1\", \"quantity\": 2 },\n           { \"product_id\": \"prod_2\", \"quantity\": 1 }\n       ],"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "           { \"product_id\": \"prod_2\", \"quantity\": 1 }\n       ],\n       \"shipping_address\": \"123 Main St, City, Country\"\n   }\n   Response:\n   {\n       \"id\": \"order_124\","
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "   {\n       \"id\": \"order_124\",\n       \"status\": \"pending\",\n       \"total\": 49.97,\n       \"currency\": \"USD\",\n       \"created_at\": \"2025-02-20T10:00:00Z\"\n   }"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "       \"created_at\": \"2025-02-20T10:00:00Z\"\n   }\n   Common Errors:\n   - 400 Bad Request — missing items or invalid quantity\n   - 401 Unauthorized — invalid token\n\n7. PATCH /orders/{id}"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "\n7. PATCH /orders/{id}\n   Description: Update an existing order (e.g., change shipping address or items before it is completed).\n   Headers: Authorization: Bearer <token>\n   Request Body:\n   {\n       \"items\": ["
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "   {\n       \"items\": [\n           { \"product_id\": \"prod_1\", \"quantity\": 1 }\n       ],\n       \"shipping_address\": \"456 Another St, City, Country\"\n   }\n   Response:"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "   }\n   Response:\n   {\n       \"id\": \"order_124\",\n       \"status\": \"pending\",\n       \"total\": 29.99,\n       \"currency\": \"USD\","
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "       \"total\": 29.99,\n       \"currency\": \"USD\",\n       \"updated_at\": \"2025-02-20T12:00:00Z\"\n   }\n   Common Errors:\n   - 400 Bad Request — invalid update\n   - 401 Unauthorized — invalid token"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "   - 400 Bad Request — invalid update\n   - 401 Unauthorized — invalid token\n   - 403 Forbidden — cannot update completed order\n   - 404 Not Found — order ID does not exist\n\n8. DELETE /orders/{id}\n   Description: Cancel an order that has not yet been completed."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "8. DELETE /orders/{id}\n   Description: Cancel an order that has not yet been completed.\n   Headers: Authorization: Bearer <token>\n   Response:\n   {\n       \"status\": \"cancelled\"\n   }"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "       \"status\": \"cancelled\"\n   }\n   Common Errors:\n   - 401 Unauthorized — invalid token\n   - 403 Forbidden — cannot cancel completed order\n   - 404 Not Found — order ID does not exist\n"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "   - 404 Not Found — order ID does not exist\n\nRate Limits:\n------------\n- Maximum 60 requests per minute per API key.\n- Exceeding the limit returns 429 Too Many Requests.\n"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "- Exceeding the limit returns 429 Too Many Requests.\n\nError Codes:\n------------\n- 400 Bad Request — invalid input\n- 401 Unauthorized — invalid or missing API key\n- 403 Forbidden — action not allowed"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "- 401 Unauthorized — invalid or missing API key\n- 403 Forbidden — action not allowed\n- 404 Not Found — resource does not exist\n- 429 Too Many Requests — rate limit exceeded\n- 500 Internal Server Error — temporary server issue\n\nBest Practices:"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "\nBest Practices:\n---------------\n1. Always validate API responses before using.\n2. Use HTTPS for all requests.\n3. Implement retry logic for 5xx errors.\n4. Cache GET requests if possible to reduce load."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "3. Implement retry logic for 5xx errors.\n4. Cache GET requests if possible to reduce load.\n5. Keep your API key secure; do not hardcode in source code."
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Sure — here’s the same **`installation_guide.txt`** as plain text only, no formatting or markdown:\n\n---\n\n# Installation Guide — Company AI Support System\n"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "# Installation Guide — Company AI Support System\n\nOverview\nThis guide explains how to install, configure, and run the Company AI Support System.\nThe application is built with Java 17, Maven, and a connection to Gemini API for AI responses.\nIt supports both console and REST modes.\n"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "It supports both console and REST modes.\n\nSystem Requirements\n\n* Java 17 or later (OpenJDK or Oracle JDK)\n* Maven 3.8.0+\n* Internet connection (for Gemini API access)"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "* Maven 3.8.0+\n* Internet connection (for Gemini API access)\n* 2 GB of free RAM minimum\n* Operating System: Windows 10+, macOS 12+, or Linux (Ubuntu 20.04+)\n\nChecking Java and Maven Installation\n"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Checking Java and Maven Installation\n\n1. Open a terminal or command prompt.\n2. Verify Java:\n   java -version\n   Expected output example:\n   openjdk version \"17.0.11\""
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "   Expected output example:\n   openjdk version \"17.0.11\"\n3. Verify Maven:\n   mvn -v\n   If Maven is missing, install it:\n\n   * On macOS: brew install maven"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "\n   * On macOS: brew install maven\n   * On Ubuntu: sudo apt install maven\n   * On Windows: download from [https://maven.apache.org/download.cgi](https://maven.apache.org/download.cgi)\n\nProject Setup\n"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Project Setup\n\n1. Clone the repository:\n   git clone [https://gitlab.com/company/ai-support-system.git](https://gitlab.com/company/ai-support-system.git)\n2. Navigate into the project folder:\n   cd ai-support-system\n3. Install dependencies:"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "   cd ai-support-system\n3. Install dependencies:\n   mvn clean install\n\nEnvironment Variables\nBefore running the application, set the Gemini API key.\n"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Before running the application, set the Gemini API key.\n\nWindows:\nsetx GEMINI_API_KEY \"your_api_key_here\"\n\nmacOS / Linux:\nexport GEMINI_API_KEY=\"your_api_key_here\""
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "macOS / Linux:\nexport GEMINI_API_KEY=\"your_api_key_here\"\n\nMake sure to restart your terminal after setting the variable.\n\nConfiguration\nThe system uses a configuration file located at:"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "Configuration\nThe system uses a configuration file located at:\nsrc/main/resources/application.properties\n\nYou can modify the following settings:\napp.mode=console          # 'console' or 'api'\napp.language=en"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "app.mode=console          # 'console' or 'api'\napp.language=en\napp.logging=true\n\nOptional: You can also create a .env file in the project root:\nGEMINI_API_KEY=your_api_key\nAPP_MODE=console"
+      } ]
+    }
+  }, {
+    "model" : "models/gemini-embedding-001",
+    "content" : {
+      "parts" : [ {
+        "text" : "GEMINI_API_KEY=your_api_key\nAPP_MODE=console\n\nRunning the Application\nTo start in console mode:\nmvn exec:java -Dexec.mainClass=\"com.example.agents.Main\"\n"
+      } ]
+    }
+  } ]
+}

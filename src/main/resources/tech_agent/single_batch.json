@@ -1,0 +1,8 @@
+{
+  "model" : "models/gemini-embedding-001",
+  "content" : {
+    "parts" : [ {
+      "text" : "Technical support and product usage questions:\n- Installing and setting up the application or service\n- Troubleshooting crashes, errors, performance or startup issues\n- Configuration, environment variables, API keys and integration steps\n- Running commands, logs analysis, debugging steps, and stack traces\n- Updating, upgrading, or uninstalling the software\n- Connectivity, database, authentication and deployment problems\n- \"My app crashes on launch\", \"How to enable X feature\", \"Where are the logs?\"\n"
+    } ]
+  }
+}

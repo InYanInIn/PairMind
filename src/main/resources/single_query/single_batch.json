@@ -1,0 +1,8 @@
+{
+  "model" : "models/gemini-embedding-001",
+  "content" : {
+    "parts" : [ {
+      "text" : "What about refund time?"
+    } ]
+  }
+}

@@ -1,6 +1,7 @@
 package janjurinok.agents;
 
 import janjurinok.LLMClient;
+import janjurinok.database.QdrantService;
 import janjurinok.rag.BatchGenerator;
 import janjurinok.rag.DocumentLoader;
 import janjurinok.rag.EmbeddingGenerator;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,18 +24,22 @@ public class AgentRouter {
    private final TechnicalAgent technicalAgent;
    private final EmbeddingGenerator embeddingGenerator;
    private final DocumentLoader documentLoader;
+   private final QdrantService qdrantService;
+
+   private static final String AGENT_COLLECTION = "agent_profiles";
 
    private final List<String> conversationHistory = new ArrayList<>();
    private final Map<String, float[]> agentEmbeddings = new HashMap<>();
    private String lastActiveAgent = null;
    private String userEmail = null;
 
-   public AgentRouter(LLMClient llm, BillingAgent billingAgent, TechnicalAgent technicalAgent, EmbeddingGenerator embeddingGenerator, DocumentLoader documentLoader) {
+   public AgentRouter(LLMClient llm, BillingAgent billingAgent, TechnicalAgent technicalAgent, EmbeddingGenerator embeddingGenerator, DocumentLoader documentLoader, QdrantService qdrantService) {
       this.llm = llm;
       this.billingAgent = billingAgent;
       this.technicalAgent = technicalAgent;
       this.embeddingGenerator = embeddingGenerator;
       this.documentLoader = documentLoader;
+      this.qdrantService = qdrantService;
    }
 
    @PostConstruct
@@ -45,19 +49,33 @@ public class AgentRouter {
 
 
    private synchronized void initializeAgentProfiles() {
+//      try {
+//         List<float[]> agent_embeddings;
+//         if (Path.of("src/main/resources/agent_profiles/tech_chunk.json").toFile().exists() &&
+//               Path.of("src/main/resources/agent_profiles/bill_chunk.json").toFile().exists()) {
+//            agent_embeddings = DocumentLoader.loadAgentsFromJson("src/main/resources/agent_profiles/tech_chunk.json", "src/main/resources/agent_profiles/bill_chunk.json");
+//         } else {
+//            agent_embeddings = documentLoader.loadAllAgents("src/main/resources/agent_profiles");
+//         }
+//
+//         agentEmbeddings.put("TechnicalAgent", agent_embeddings.get(0));
+//         agentEmbeddings.put("BillingAgent", agent_embeddings.get(1));
+//      } catch (IOException e) {
+//         throw new RuntimeException("Failed to load agent profiles: " + e.getMessage(), e);
+//      }
       try {
-         List<float[]> agent_embeddings;
-         if (Path.of("src/main/resources/agent_profiles/tech_chunk.json").toFile().exists() &&
-               Path.of("src/main/resources/agent_profiles/bill_chunk.json").toFile().exists()) {
-            agent_embeddings = DocumentLoader.loadAgentsFromJson("src/main/resources/agent_profiles/tech_chunk.json", "src/main/resources/agent_profiles/bill_chunk.json");
-         } else {
-            agent_embeddings = documentLoader.loadAllAgents("src/main/resources/agent_profiles");
-         }
 
+         List<float[]> agent_embeddings = documentLoader.loadAllAgents(AGENT_COLLECTION);
+         if (agent_embeddings.size() != 2) {
+            throw new RuntimeException("Expected 2 agent profiles, found " + agent_embeddings.size());
+         }
          agentEmbeddings.put("TechnicalAgent", agent_embeddings.get(0));
          agentEmbeddings.put("BillingAgent", agent_embeddings.get(1));
+
       } catch (IOException e) {
-         throw new RuntimeException("Failed to load agent profiles: " + e.getMessage(), e);
+         throw new RuntimeException(e);
+      } catch (Exception e) {
+         throw new RuntimeException(e);
       }
    }
 

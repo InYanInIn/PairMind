@@ -93,9 +93,9 @@ public class EmbeddingGenerator {
             }
          }
 
-         combinedResponse.set("responses", allResponses);
-         mapper.writerWithDefaultPrettyPrinter().writeValue(outputFilePath.toFile(), combinedResponse);
-         System.out.println("Saved combined response to " + outputFilePath.toAbsolutePath());
+//         combinedResponse.set("responses", allResponses);
+//         mapper.writerWithDefaultPrettyPrinter().writeValue(outputFilePath.toFile(), combinedResponse);
+//         System.out.println("Saved combined response to " + outputFilePath.toAbsolutePath());
 
       } catch (Exception e) {
          e.printStackTrace();
@@ -143,5 +143,9 @@ public class EmbeddingGenerator {
       } catch (URISyntaxException | IOException | InterruptedException e) {
          throw new RuntimeException(e);
       }
+   }
+
+   public int getEmbeddingSize() {
+      return 3072;
    }
 }
