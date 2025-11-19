@@ -50,6 +50,10 @@ public class DocumentLoader {
             }
          }
       }
+      File batchDir = new File("src/main/resources/batches");
+      if (!batchDir.exists()) {
+         batchDir.mkdirs();
+      }
 
       List<File> batch_files = createBatches(allBlocks, "src/main/resources/batches");
       List<float[]> embeddingsList = embeddingGenerator.generateEmbeddingsBatch(batch_files, "src/main/resources/embeddings.json");
@@ -174,6 +178,7 @@ public class DocumentLoader {
                   - Keywords & short forms: refund, cancel, invoice, charge, billing, price
                   - Example phrasings: "I was charged twice", "How do I cancel my subscription", "Where is my invoice?"
                   """;
+
 
       File tech_batch = BatchGenerator.createSingleBatchFile("src/main/resources/tech_agent", tech_query);
       File bill_batch = BatchGenerator.createSingleBatchFile("src/main/resources/bill_agent", bill_query);

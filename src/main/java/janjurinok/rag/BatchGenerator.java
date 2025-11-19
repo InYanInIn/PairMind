@@ -74,6 +74,9 @@ public class BatchGenerator {
          content.set("parts", parts);
          root.set("content", content);
 
+         File techDir = new File(outputDir);
+         if (!techDir.exists()) techDir.mkdirs();
+
          File file = new File(outputDir, "single_batch.json");
          mapper.writerWithDefaultPrettyPrinter().writeValue(file, root);
 //         System.out.println("Created batch JSON file: " + file.getAbsolutePath());
